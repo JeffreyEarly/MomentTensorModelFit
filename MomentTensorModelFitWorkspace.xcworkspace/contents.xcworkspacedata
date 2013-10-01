@@ -5,6 +5,6 @@
       location = "container:MomentTensorModelFit.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:../GLNumericalModelingKit/GLNumericalModelingKit.xcodeproj">
+      location = "container:../GLNumericalModelingKit/GLNumericalModelingKit.xcodeproj">
    </FileRef>
 </Workspace>
