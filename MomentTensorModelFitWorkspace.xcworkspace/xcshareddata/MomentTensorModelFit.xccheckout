@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C86C349B-0DF6-4486-BB47-78FDA0CE5DC8</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MomentTensorModelFit</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>132A3D41-878F-40E6-81D2-F63B5ECE4D8C</key>
+		<string>https://github.com/JeffreyEarly/MomentTensorModelFit.git</string>
+		<key>75E81D1B-8D47-40DF-B92C-A8C6555069DA</key>
+		<string>https://github.com/JeffreyEarly/GLNumericalModelingKit.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MomentTensorModelFit.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>132A3D41-878F-40E6-81D2-F63B5ECE4D8C</key>
+		<string>../..</string>
+		<key>75E81D1B-8D47-40DF-B92C-A8C6555069DA</key>
+		<string>../../GLNumericalModelingKit</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/JeffreyEarly/MomentTensorModelFit.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>132A3D41-878F-40E6-81D2-F63B5ECE4D8C</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>75E81D1B-8D47-40DF-B92C-A8C6555069DA</string>
+			<key>IDESourceControlWCCName</key>
+			<string>GLNumericalModelingKit</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>132A3D41-878F-40E6-81D2-F63B5ECE4D8C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MomentTensorModelFit</string>
+		</dict>
+	</array>
+</dict>
+</plist>
