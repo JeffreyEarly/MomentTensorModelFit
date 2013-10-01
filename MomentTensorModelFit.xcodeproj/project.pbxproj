@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		815878EE17FB6A210049675C /* GLNumericalModelingKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 815878ED17FB6A210049675C /* GLNumericalModelingKit.dylib */; };
 		81A830F817FA2E99003D32C6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81A830F717FA2E99003D32C6 /* Foundation.framework */; };
 		81A830FB17FA2E99003D32C6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 81A830FA17FA2E99003D32C6 /* main.m */; };
 		81A830FF17FA2E99003D32C6 /* MomentTensorModelFit.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */; };
@@ -26,6 +27,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		815878EB17FB67690049675C /* GLNumericalModelingKit.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = GLNumericalModelingKit.dylib; path = ../GLNumericalModelingKit/build/Debug/GLNumericalModelingKit.dylib; sourceTree = "<group>"; };
+		815878ED17FB6A210049675C /* GLNumericalModelingKit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = GLNumericalModelingKit.dylib; path = "../../../../../Library/Developer/Xcode/DerivedData/MomentTensorModelFitWorkspace-dujtjgairfaohcgmiteotgjbhviv/Build/Products/Debug/GLNumericalModelingKit.dylib"; sourceTree = "<group>"; };
 		81A830F417FA2E99003D32C6 /* MomentTensorModelFit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomentTensorModelFit; sourceTree = BUILT_PRODUCTS_DIR; };
 		81A830F717FA2E99003D32C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		81A830FA17FA2E99003D32C6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -38,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				815878EE17FB6A210049675C /* GLNumericalModelingKit.dylib in Frameworks */,
 				81A830F817FA2E99003D32C6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,6 +69,8 @@
 		81A830F617FA2E99003D32C6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				815878ED17FB6A210049675C /* GLNumericalModelingKit.dylib */,
+				815878EB17FB67690049675C /* GLNumericalModelingKit.dylib */,
 				81A830F717FA2E99003D32C6 /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -219,6 +225,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MomentTensorModelFit/MomentTensorModelFit-Prefix.pch";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/MomentTensorModelFitWorkspace-dujtjgairfaohcgmiteotgjbhviv/Build/Products/Debug",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -228,6 +238,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MomentTensorModelFit/MomentTensorModelFit-Prefix.pch";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/MomentTensorModelFitWorkspace-dujtjgairfaohcgmiteotgjbhviv/Build/Products/Debug",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -251,6 +265,7 @@
 				81A8310417FA2E99003D32C6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
