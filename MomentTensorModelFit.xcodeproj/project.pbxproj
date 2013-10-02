@@ -32,7 +32,7 @@
 		81A830FA17FA2E99003D32C6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		81A830FD17FA2E99003D32C6 /* MomentTensorModelFit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MomentTensorModelFit-Prefix.pch"; sourceTree = "<group>"; };
 		81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MomentTensorModelFit.1; sourceTree = "<group>"; };
-		81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = GLNumericalModelingKit.dylib; path = "../../../../../Library/Developer/Xcode/DerivedData/MomentTensorModelFitWorkspace-gefjypqxdxpntegqwckrjvtagiba/Build/Products/Debug/GLNumericalModelingKit.dylib"; sourceTree = "<group>"; };
+		81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = GLNumericalModelingKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
