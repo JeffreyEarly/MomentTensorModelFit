@@ -81,8 +81,8 @@ int main(int argc, const char * argv[])
         };
         
         GLFloat kappaScale = 0.1;
-        GLScalar *kappa = [GLScalar scalarWithValue: log(0.1/kappaScale) forEquation: equation];
-        GLScalar *kappaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
+        GLScalar *kappa = [GLScalar scalarWithValue: log(0.0001/kappaScale) forEquation: equation];
+        GLScalar *kappaDelta = [GLScalar scalarWithValue: 2.0 forEquation: equation];
         
         GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
             GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
@@ -99,15 +99,18 @@ int main(int argc, const char * argv[])
         
         NSLog(@"total error: %f @ (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
         
-        kappa = [GLScalar scalarWithValue: log(0.1/kappaScale) forEquation: equation];
-        kappaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
+        // kappaDelta is carefully chosen. It needs to represent a sort of 'size of parameter space' that we want to explore.
+        // So here, we make it move around in fairly big chunks, like orders of magnitude.
+        // Yup, big steps are the best, for ALL parameters.
+        kappa = [GLScalar scalarWithValue: log(.1/kappaScale) forEquation: equation];
+        kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: equation];
         
         GLFloat sigmaScale = 5.0E-6;
-        GLScalar *sigma = [GLScalar scalarWithValue: log(8.0E-6/sigmaScale) forEquation: equation];
+        GLScalar *sigma = [GLScalar scalarWithValue: log(1E-6/sigmaScale) forEquation: equation];
         GLScalar *sigmaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
         
-        GLScalar *theta = [GLScalar scalarWithValue: -30.*M_PI/180. forEquation: equation];
-        GLScalar *thetaDelta = [GLScalar scalarWithValue: 10.*M_PI/180. forEquation: equation];
+        GLScalar *theta = [GLScalar scalarWithValue: 0.0*M_PI/180. forEquation: equation];
+        GLScalar *thetaDelta = [GLScalar scalarWithValue: 45.*M_PI/180. forEquation: equation];
         
         minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta] forFunction:^(NSArray *xArray) {
             GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
