@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		8143E91617FC9C7E00020090 /* libgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8143E91217FC9C7E00020090 /* libgsl.a */; };
 		8143E91717FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c in Sources */ = {isa = PBXBuildFile; fileRef = 8143E91317FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c */; };
+		819545EE18367E5F00A357A3 /* MomentEllipseFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */; };
+		819545F1183688FD00A357A3 /* EllipseErrorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545F0183688FD00A357A3 /* EllipseErrorOperation.m */; };
+		819545F3183693DA00A357A3 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819545F2183693DA00A357A3 /* Accelerate.framework */; };
 		81A830F817FA2E99003D32C6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81A830F717FA2E99003D32C6 /* Foundation.framework */; };
 		81A830FB17FA2E99003D32C6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 81A830FA17FA2E99003D32C6 /* main.m */; };
 		81A830FF17FA2E99003D32C6 /* MomentTensorModelFit.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */; };
@@ -35,6 +38,11 @@
 		8143E91517FC9C7E00020090 /* program_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program_constants.h; sourceTree = "<group>"; };
 		8143E91817FC9CFA00020090 /* gsl */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gsl; sourceTree = "<group>"; };
 		8143E91917FC9D0700020090 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		819545EC18367E5F00A357A3 /* MomentEllipseFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MomentEllipseFileReader.h; sourceTree = "<group>"; };
+		819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MomentEllipseFileReader.m; sourceTree = "<group>"; };
+		819545EF183688FD00A357A3 /* EllipseErrorOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EllipseErrorOperation.h; sourceTree = "<group>"; };
+		819545F0183688FD00A357A3 /* EllipseErrorOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EllipseErrorOperation.m; sourceTree = "<group>"; };
+		819545F2183693DA00A357A3 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		81A830F417FA2E99003D32C6 /* MomentTensorModelFit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomentTensorModelFit; sourceTree = BUILT_PRODUCTS_DIR; };
 		81A830F717FA2E99003D32C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		81A830FA17FA2E99003D32C6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -48,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				819545F3183693DA00A357A3 /* Accelerate.framework in Frameworks */,
 				81A830F817FA2E99003D32C6 /* Foundation.framework in Frameworks */,
 				81AEF69017FBA35300F87614 /* GLNumericalModelingKit.dylib in Frameworks */,
 				8143E91617FC9C7E00020090 /* libgsl.a in Frameworks */,
@@ -77,6 +86,7 @@
 		81A830F617FA2E99003D32C6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				819545F2183693DA00A357A3 /* Accelerate.framework */,
 				81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */,
 				81A830F717FA2E99003D32C6 /* Foundation.framework */,
 			);
@@ -87,6 +97,10 @@
 			isa = PBXGroup;
 			children = (
 				81A830FA17FA2E99003D32C6 /* main.m */,
+				819545EC18367E5F00A357A3 /* MomentEllipseFileReader.h */,
+				819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */,
+				819545EF183688FD00A357A3 /* EllipseErrorOperation.h */,
+				819545F0183688FD00A357A3 /* EllipseErrorOperation.m */,
 				81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */,
 				81A830FC17FA2E99003D32C6 /* Supporting Files */,
 			);
@@ -159,7 +173,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8143E91717FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c in Sources */,
+				819545EE18367E5F00A357A3 /* MomentEllipseFileReader.m in Sources */,
 				81A830FB17FA2E99003D32C6 /* main.m in Sources */,
+				819545F1183688FD00A357A3 /* EllipseErrorOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
