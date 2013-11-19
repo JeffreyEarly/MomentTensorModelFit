@@ -17,15 +17,7 @@ int main(int argc, const char * argv[])
 	
     @autoreleasepool {
         
-        NSURL *ellipseParameterFile = [NSURL fileURLWithPath:@"/Users/jearly/Dropbox/Documents/Projects/LatMix/umassd_drifters/ObservationalData/griddedRho1Drifters_moment_ellipse.txt"];
         GLEquation *equation = [[GLEquation alloc] init];
-        
-        MomentEllipseFileReader *file = [[MomentEllipseFileReader alloc] initWithURL: ellipseParameterFile equation: equation];
-        
-//        GLFloat sigma = 3.77732e-06;
-//        GLFloat theta = -32.4243*M_PI/180.;
-//        GLFloat kappa = 0.238886;
-        
         
         // This model requires initial conditions (Mxx0, Myy0, Mxy0), and a one-dimensional time variable t.
         // It takes one parameter, kappa.
@@ -38,19 +30,23 @@ int main(int argc, const char * argv[])
             return @[Mxx, Myy, Mxy];
         };
         
+		
+		// This model requires initial conditions (Mxx0, Myy0, Mxy0), and a one-dimensional time variable t.
+        // It takes three parameters, kappa, sigma, and theta.
+        // It returns (Mxx, Myy, Mxy) for all time t.
         NSArray * (^strainDiffusivityModel) (GLFloat, GLFloat, GLFloat, GLFunction *, GLScalar *, GLScalar *, GLScalar * ) = ^(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *sigma, GLScalar *theta ) {
             GLScalar *cos_t = [theta cos];
             GLScalar *sin_t = [theta sin];
             
-            GLFunction * cos2 = [cos_t times: cos_t];
-            GLFunction * sin2 = [sin_t times: sin_t];
-            GLFunction * cossin = [cos_t times: sin_t];
+            GLScalar *cos2 = [cos_t times: cos_t];
+            GLScalar *sin2 = [sin_t times: sin_t];
+            GLScalar *cossin = [cos_t times: sin_t];
             
-            GLFunction * tks = [[kappa times: @(2)] dividedBy: sigma];
+            GLScalar * tks = [[kappa times: @(2)] dividedBy: sigma];
             
-            GLFunction * A = [[[cos2 times: @(Mxx0)] plus: [sin2 times: @(Myy0)]] plus: [[cossin times: @(2.*Mxy0)] plus: tks]];
-            GLFunction * B = [[[sin2 times: @(Mxx0)] plus: [cos2 times: @(Myy0)]] minus: [[cossin times: @(2.*Mxy0)] plus: tks]];
-            GLFunction * C = [[[cossin times: @(-Mxx0)] plus: [cossin times: @(Myy0)]] plus: [[cos2 minus: sin2] times: @(Mxy0)]];
+            GLScalar * A = [[[cos2 times: @(Mxx0)] plus: [sin2 times: @(Myy0)]] plus: [[cossin times: @(2.*Mxy0)] plus: tks]];
+            GLScalar * B = [[[sin2 times: @(Mxx0)] plus: [cos2 times: @(Myy0)]] minus: [[cossin times: @(2.*Mxy0)] plus: tks]];
+            GLScalar * C = [[[cossin times: @(-Mxx0)] plus: [cossin times: @(Myy0)]] plus: [[cos2 minus: sin2] times: @(Mxy0)]];
             
             GLFunction *Maa = [[[[t times: sigma] exponentiate] times: A] minus: tks];
             GLFunction *Mbb = [[[[t times: [sigma negate]] exponentiate] times: B] plus: tks];
@@ -80,56 +76,93 @@ int main(int argc, const char * argv[])
             return @[semiMajor, semiMinor, angle];
         };
         
-        GLFloat kappaScale = 0.1;
-        GLScalar *kappa = [GLScalar scalarWithValue: log(0.0001/kappaScale) forEquation: equation];
-        GLScalar *kappaDelta = [GLScalar scalarWithValue: 2.0 forEquation: equation];
-        
-        GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
-            GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
-            NSArray *tensorComps = diffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled);
-            NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
-     
-            EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
-        
-            return error.result[0];
-        }];
-        
-        GLScalar *minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
-        GLScalar *minError = minimizer.result[1];
-        
-        NSLog(@"total error: %f @ (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
-        
-        // kappaDelta is carefully chosen. It needs to represent a sort of 'size of parameter space' that we want to explore.
-        // So here, we make it move around in fairly big chunks, like orders of magnitude.
-        // Yup, big steps are the best, for ALL parameters.
-        kappa = [GLScalar scalarWithValue: log(.1/kappaScale) forEquation: equation];
-        kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: equation];
-        
-        GLFloat sigmaScale = 5.0E-6;
-        GLScalar *sigma = [GLScalar scalarWithValue: log(1E-6/sigmaScale) forEquation: equation];
-        GLScalar *sigmaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
-        
-        GLScalar *theta = [GLScalar scalarWithValue: 0.0*M_PI/180. forEquation: equation];
-        GLScalar *thetaDelta = [GLScalar scalarWithValue: 45.*M_PI/180. forEquation: equation];
-        
-        minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta] forFunction:^(NSArray *xArray) {
-            GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
-            GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
-            NSArray *tensorComps = strainDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2]);
-            NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
-            
-            EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
-            
-            return error.result[0];
-        }];
-        
-        minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
-        GLScalar *minSigma = [[minimizer.result[1] exponentiate] times: @(sigmaScale)];
-        GLScalar *minTheta = minimizer.result[2];
-        minError = minimizer.result[3];
-        
-        NSLog(@"total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
-        
+		
+		NSFileManager *fileManager = [[NSFileManager alloc] init];
+		NSString *folderPath = @"/Users/jearly/Dropbox/Documents/Projects/LatMix/umassd_drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
+		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
+		
+		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
+		NSUInteger i=1;
+		
+		for ( NSString *filename in ellipseFiles)
+		{
+			if ( ![filename.pathExtension isEqualToString: @"txt"]) continue;
+			MomentEllipseFileReader *file = [[MomentEllipseFileReader alloc] initWithURL: [NSURL fileURLWithPath: [NSString stringWithFormat: @"%@%@", folderPath, filename]] equation: equation];
+			if (!file) continue;
+			
+			NSArray *drifterIDs = [[filename stringByDeletingPathExtension] componentsSeparatedByString: @"_"];
+			NSMutableString *idString = [NSMutableString stringWithFormat: @"drifterIDs{%lu}=[", i];
+			for (NSString *name in drifterIDs) {
+				if ([drifterIDs indexOfObject: name] == 0) {
+					continue; // the first string is just 'drifter'.
+				}
+				else if ([drifterIDs indexOfObject: name] == drifterIDs.count-1) {
+					[idString appendFormat: @"%@", name];
+				} else {
+					[idString appendFormat: @"%@;", name];
+				}
+			}
+			[idString appendString: @"]; "];
+			[outputData appendString: idString];
+			
+			
+			GLFloat kappaScale = 0.1;
+			GLScalar *kappa = [GLScalar scalarWithValue: log(0.0001/kappaScale) forEquation: equation];
+			GLScalar *kappaDelta = [GLScalar scalarWithValue: 2.0 forEquation: equation];
+			
+			GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
+				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+				NSArray *tensorComps = diffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled);
+				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		 
+				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+			
+				return error.result[0];
+			}];
+			
+			GLScalar *minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
+			GLScalar *minError = minimizer.result[1];
+			
+			[outputData appendFormat: @"model1_error(%lu)=%g; model1_kappa(%lu)=%g; ", i, *(minError.pointerValue), i, *(minKappa.pointerValue)];
+			
+			NSLog(@"%@---diffusivity model total error: %f @ (kappa)=(%.4f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue));
+			
+			// kappaDelta is carefully chosen. It needs to represent a sort of 'size of parameter space' that we want to explore.
+			// So here, we make it move around in fairly big chunks, like orders of magnitude.
+			// Yup, big steps are the best, for ALL parameters.
+			kappa = [GLScalar scalarWithValue: log(.1/kappaScale) forEquation: equation];
+			kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: equation];
+			
+			GLFloat sigmaScale = 5.0E-6;
+			GLScalar *sigma = [GLScalar scalarWithValue: log(1E-6/sigmaScale) forEquation: equation];
+			GLScalar *sigmaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
+			
+			GLScalar *theta = [GLScalar scalarWithValue: 0.0*M_PI/180. forEquation: equation];
+			GLScalar *thetaDelta = [GLScalar scalarWithValue: 45.*M_PI/180. forEquation: equation];
+			
+			minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta] forFunction:^(NSArray *xArray) {
+				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
+				NSArray *tensorComps = strainDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2]);
+				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+				
+				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+				
+				return error.result[0];
+			}];
+			
+			minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
+			GLScalar *minSigma = [[minimizer.result[1] exponentiate] times: @(sigmaScale)];
+			GLScalar *minTheta = minimizer.result[2];
+			minError = minimizer.result[3];
+			
+			[outputData appendFormat: @"model2_error(%lu)=%g; model2_kappa(%lu)=%g; model2_sigma(%lu)=%g; model2_theta(%lu)=%g;\n", i, *(minError.pointerValue), i, *(minKappa.pointerValue), i, *(minSigma.pointerValue), i, *(minTheta.pointerValue)];
+			
+			NSLog(@"%@---strain-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
+			i++;
+        }
+		
+		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
     }
     return 0;
 }
