@@ -52,18 +52,19 @@
         // There are two logical ways to weight the error.
         
         // 1. (sum error[i])/(sum area[i])
-        GLFloat errorSum;
-        vGL_sve( errorAtTime, 1, &errorSum, nPoints);
-        
-        GLFloat areaSum;
-        vGL_sve( areaAtTime, 1, &areaSum, nPoints);
-        
-        *totalError = errorSum/areaSum;
+        // This has the drawback that the total error is time-dependent, weighted towards the larger ellipse.
+//        GLFloat errorSum;
+//        vGL_sve( errorAtTime, 1, &errorSum, nPoints);
+//        
+//        GLFloat areaSum;
+//        vGL_sve( areaAtTime, 1, &areaSum, nPoints);
+//        
+//        *totalError = errorSum/areaSum;
         
         // 2. sum (error[i]/area[i])
-//        vGL_vdiv( areaAtTime, 1, errorAtTime, 1, errorAtTime, 1, nPoints);
-//        vGL_sve( errorAtTime, 1, totalError, nPoints);
-//        *totalError = (*totalError)/nPoints;
+        vGL_vdiv( areaAtTime, 1, errorAtTime, 1, errorAtTime, 1, nPoints);
+        vGL_sve( errorAtTime, 1, totalError, nPoints);
+        *totalError = (*totalError)/nPoints;
     };
     
     if ((self=[super initWithResult: result operand: operand buffers: buffers operation:errorOperation])) {
