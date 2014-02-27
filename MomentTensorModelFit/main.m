@@ -78,7 +78,7 @@ int main(int argc, const char * argv[])
         
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Dropbox/Documents/Projects/LatMix/umassd_drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Dropbox/Documents/Projects/LatMix/umassd_drifters/PascaleModelData/MomementEllipses_IsopycnalFloats/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
@@ -162,7 +162,7 @@ int main(int argc, const char * argv[])
 			i++;
         }
 		
-		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters_error_method2.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
     }
     return 0;
 }
