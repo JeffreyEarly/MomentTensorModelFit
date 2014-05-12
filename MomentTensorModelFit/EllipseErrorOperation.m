@@ -40,13 +40,18 @@
         GLFloat *areaAtTime = (GLFloat *) [bufferArray[1] bytes];
         
         dispatch_apply(tDim.nPoints, dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(size_t iTime) {
-            double X[4], Y[4];
-            int nroots, rtnCode;
-            double overlapArea = ellipse_ellipse_overlap(angle_obs[iTime], a_obs[iTime], b_obs[iTime], 0.0, 0.0, angle_model[iTime], a_model[iTime], b_model[iTime],0.0, 0.0,X, Y, &nroots, &rtnCode);
-            double obsArea =  M_PI * a_obs[iTime] *  b_obs[iTime];
-            double modelArea = M_PI * a_model[iTime] *  b_model[iTime];
-            errorAtTime[iTime] = (modelArea - overlapArea) + (obsArea - overlapArea);
-            areaAtTime[iTime] = obsArea;
+//            if ( isinf(angle_model[iTime]) || isinf(a_model[iTime]) || isinf(b_model[iTime]) ) {
+//                errorAtTime[iTime] = HUGE_VAL;
+//                areaAtTime[iTime] = M_PI * a_obs[iTime] *  b_obs[iTime];;
+//            } else {
+                double X[4], Y[4];
+                int nroots, rtnCode;
+                double overlapArea = ellipse_ellipse_overlap(angle_obs[iTime], a_obs[iTime], b_obs[iTime], 0.0, 0.0, angle_model[iTime], a_model[iTime], b_model[iTime],0.0, 0.0,X, Y, &nroots, &rtnCode);
+                double obsArea =  M_PI * a_obs[iTime] *  b_obs[iTime];
+                double modelArea = M_PI * a_model[iTime] *  b_model[iTime];
+                errorAtTime[iTime] = (modelArea - overlapArea) + (obsArea - overlapArea);
+                areaAtTime[iTime] = obsArea;
+//            }
         });
         
         // There are two logical ways to weight the error.
