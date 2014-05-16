@@ -154,6 +154,8 @@ int main(int argc, const char * argv[])
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
 		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
+        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
+        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-strained-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
@@ -211,7 +213,7 @@ int main(int argc, const char * argv[])
 			kappa = [GLScalar scalarWithValue: log(.1/kappaScale) forEquation: equation];
 			kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: equation];
 			
-			GLFloat sigmaScale = 5.0E-6;
+			GLFloat sigmaScale = 4.0E-6;
 			GLScalar *sigma = [GLScalar scalarWithValue: log(1E-6/sigmaScale) forEquation: equation];
 			GLScalar *sigmaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
 			
@@ -241,52 +243,56 @@ int main(int argc, const char * argv[])
 			NSLog(@"%@---strain-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
             
             
+            sigmaScale = 1e-5;
+            sigma = [GLScalar scalarWithValue: log(1E-5/sigmaScale) forEquation: equation];
             
-            GLFloat zetaScale = 5E-6;
-			GLScalar *zeta = [GLScalar scalarWithValue: log(1E-6/zetaScale) forEquation: equation];
-			GLScalar *zetaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
+            GLFloat zetaScale = 1E-6;
+			GLScalar *zeta = [GLScalar scalarWithValue: log(1e-6/zetaScale) forEquation: equation];
+			GLScalar *zetaDelta = [GLScalar scalarWithValue: 0.2 forEquation: equation];
             
             // initializing with the results from the previous calculation. we can use log searches if we look for both positive and negative vorticity.
-            GLMinimizationOperation *minimizer_positive = [[GLMinimizationOperation alloc] initAtPoint: @[kappaDelta, sigmaDelta, thetaDelta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
-				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
-				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
-                GLScalar *zetaUnscaled = [[xArray[3] exponentiate] times: @(zetaScale)];
-				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
-				
-				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
-				
-				return error.result[0];
-			}];
-			
-			GLMinimizationOperation *minimizer_negative = [[GLMinimizationOperation alloc] initAtPoint: @[kappaDelta, sigmaDelta, thetaDelta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
-				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
-				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
-                GLScalar *zetaUnscaled = [[[xArray[3] exponentiate] times: @(zetaScale)] negate];
-				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
-				
-				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
-				
-				return error.result[0];
-			}];
-			
-			GLScalar *minPos = minimizer_positive.result[4];
-			GLScalar *minNeg = minimizer_negative.result[4];
-			GLFloat pos = *(minPos.pointerValue);
-			GLFloat neg = *(minNeg.pointerValue);
-			
-			minimizer = pos < neg ? minimizer_positive : minimizer_negative;
-			
-			minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
-			minSigma = [[minimizer.result[1] exponentiate] times: @(sigmaScale)];
-            minTheta = minimizer_positive.result[2];
-            GLScalar *minZeta = [[minimizer.result[3] exponentiate] times: @(zetaScale)];
-			minError = minimizer.result[4];
-			
-			[outputData appendFormat: @"model3_error(%lu)=%g; model3_kappa(%lu)=%g; model3_sigma(%lu)=%g; model3_theta(%lu)=%g; model3_zeta(%lu)=%g;\n", i, *(minError.pointerValue), i, *(minKappa.pointerValue), i, *(minSigma.pointerValue), i, *(minTheta.pointerValue), i, *(minZeta.pointerValue)];
-			
-			NSLog(@"%@---strain-vorticity-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+//            GLMinimizationOperation *minimizer_positive = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
+//				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+//				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
+//                GLScalar *zetaUnscaled = [[xArray[3] exponentiate] times: @(zetaScale)];
+//				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
+//				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+//				
+//				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+//				
+//				return error.result[0];
+//			}];
+//            NSArray *posResults = minimizer_positive.result;
+//            
+//			GLMinimizationOperation *minimizer_negative = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
+//				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+//				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
+//                GLScalar *zetaUnscaled = [[[xArray[3] exponentiate] times: @(zetaScale)] negate];
+//				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
+//				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+//				
+//				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+//				
+//				return error.result[0];
+//			}];
+//            NSArray *negResults = minimizer_negative.result;
+//            
+//			GLScalar *minPos = posResults[4];
+//			GLScalar *minNeg = negResults[4];
+//			GLFloat pos = *(minPos.pointerValue);
+//			GLFloat neg = *(minNeg.pointerValue);
+//			
+//			results = pos < neg ? posResults : negResults;
+//			
+//			minKappa = [[results[0] exponentiate] times: @(kappaScale)];
+//			minSigma = [[results[1] exponentiate] times: @(sigmaScale)];
+//            minTheta = results[2];
+//            GLScalar *minZeta = pos < neg ? [[results[3] exponentiate] times: @(zetaScale)] : [[[results[3] exponentiate] times: @(zetaScale)] negate];
+//			minError = results[4];
+//			
+//			[outputData appendFormat: @"model3_error(%lu)=%g; model3_kappa(%lu)=%g; model3_sigma(%lu)=%g; model3_theta(%lu)=%g; model3_zeta(%lu)=%g;\n", i, *(minError.pointerValue), i, *(minKappa.pointerValue), i, *(minSigma.pointerValue), i, *(minTheta.pointerValue), i, *(minZeta.pointerValue)];
+//			
+//			NSLog(@"%@---strain-vorticity-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
             
 			i++;
         }
