@@ -153,7 +153,7 @@ int main(int argc, const char * argv[])
         
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/Models/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
@@ -242,18 +242,26 @@ int main(int argc, const char * argv[])
             
             
             
-            GLFloat zetaScale = 5.0E-6;
+            GLFloat zetaScale = 5E-6;
 			GLScalar *zeta = [GLScalar scalarWithValue: log(1E-6/zetaScale) forEquation: equation];
 			GLScalar *zetaDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
             
-//			GLScalar *zeta = [GLScalar scalarWithValue: 0 forEquation: equation];
-//			GLScalar *zetaDelta = [GLScalar scalarWithValue: 1e-6 forEquation: equation];
-            
             // initializing with the results from the previous calculation. we can use log searches if we look for both positive and negative vorticity.
-            minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[results[0], results[1], results[2], zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
+            GLMinimizationOperation *minimizer_positive = [[GLMinimizationOperation alloc] initAtPoint: @[kappaDelta, sigmaDelta, thetaDelta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
 				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
 				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
-                //GLScalar *zetaUnscaled = xArray[3];
+                GLScalar *zetaUnscaled = [[xArray[3] exponentiate] times: @(zetaScale)];
+				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
+				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+				
+				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+				
+				return error.result[0];
+			}];
+			
+			GLMinimizationOperation *minimizer_negative = [[GLMinimizationOperation alloc] initAtPoint: @[kappaDelta, sigmaDelta, thetaDelta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
+				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
                 GLScalar *zetaUnscaled = [[[xArray[3] exponentiate] times: @(zetaScale)] negate];
 				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
 				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
@@ -263,11 +271,17 @@ int main(int argc, const char * argv[])
 				return error.result[0];
 			}];
 			
+			GLScalar *minPos = minimizer_positive.result[4];
+			GLScalar *minNeg = minimizer_negative.result[4];
+			GLFloat pos = *(minPos.pointerValue);
+			GLFloat neg = *(minNeg.pointerValue);
+			
+			minimizer = pos < neg ? minimizer_positive : minimizer_negative;
+			
 			minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
 			minSigma = [[minimizer.result[1] exponentiate] times: @(sigmaScale)];
-            minTheta = minimizer.result[2];
+            minTheta = minimizer_positive.result[2];
             GLScalar *minZeta = [[minimizer.result[3] exponentiate] times: @(zetaScale)];
-            //GLScalar *minZeta = minimizer[3];
 			minError = minimizer.result[4];
 			
 			[outputData appendFormat: @"model3_error(%lu)=%g; model3_kappa(%lu)=%g; model3_sigma(%lu)=%g; model3_theta(%lu)=%g; model3_zeta(%lu)=%g;\n", i, *(minError.pointerValue), i, *(minKappa.pointerValue), i, *(minSigma.pointerValue), i, *(minTheta.pointerValue), i, *(minZeta.pointerValue)];
