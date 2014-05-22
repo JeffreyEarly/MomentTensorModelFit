@@ -18,8 +18,9 @@ int main(int argc, const char * argv[])
 		GLFloat floatSpacing = 0;
 		GLFloat maxTime = 6*86400;
 		GLFloat timeStep = 30*60;
+		NSUInteger nParticles = 100000;
 	    GLEquation *equation = [[GLEquation alloc] init];
-		GLDimension *floatDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 10 domainMin: 1 length: 10];
+		GLDimension *floatDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: nParticles domainMin: 1 length: nParticles];
 		GLFunction *xPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
 		GLFunction *yPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
 		
@@ -39,12 +40,12 @@ int main(int argc, const char * argv[])
 	    
 		GLFloat kappa = 10; // m^2/s
         GLFloat norm = sqrt(timeStep*2*kappa);
-        norm = sqrt(4)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
+        norm = sqrt(36./10.)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
         // RK4: dt/3 f(0) + dt/6 f(1) + dt/6 *f(4) + dt/3*f(3)
-        // Mean of 1/3 and 1/6? 1/4. It's  the geometric mean to get the same norm, hence, sqrt 4.
+        // sqrt of ( (1/3)^2 + (1/6)^ + (1/6)^2 + (1/3)^2 )
         
         NSArray *y=@[xPosition, yPosition];
-        GLAdaptiveRungeKuttaOperation *integrator = [GLAdaptiveRungeKuttaOperation rungeKutta4AdvanceY: y stepSize: timeStep fFromTY:^(GLScalar *time, NSArray *yNew) {
+        GLRungeKuttaOperation *integrator = [GLRungeKuttaOperation rungeKutta4AdvanceY: y stepSize: timeStep fFromTY:^(GLScalar *time, NSArray *yNew) {
             GLFunction *xStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
             GLFunction *yStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
             xStep = [xStep times: @(norm)];
@@ -57,12 +58,12 @@ int main(int argc, const char * argv[])
 		NSArray *newPositions = [integrator integrateAlongDimension: tDim];
 				
 		GLScalar *meanSquareSeparation0 = [[[xPosition times: xPosition] plus: [yPosition times: yPosition]] mean];
-		GLScalar *meanSquareSeparation = [[[newPositions[0] times: newPositions[0]] plus: [newPositions[1] times: newPositions[1]]] mean];
+		GLFunction *meanSquareSeparation = [[[newPositions[0] times: newPositions[0]] plus: [newPositions[1] times: newPositions[1]]] mean: 1];
 		
 		GLFloat a = *(meanSquareSeparation0.pointerValue);
-        GLFloat b = *(meanSquareSeparation.pointerValue);
-        [meanSquareSeparation0 dumpToConsole];
-        [meanSquareSeparation dumpToConsole];
+        GLFloat b = meanSquareSeparation.pointerValue[meanSquareSeparation.nDataPoints-1];
+        //[meanSquareSeparation0 dumpToConsole];
+        //[meanSquareSeparation dumpToConsole];
         
         GLFloat kappaDeduced = (0.25)*(b-a)/maxTime;
         NSLog(@"kappa: %f, actual kappa: %f", kappa, kappaDeduced);
