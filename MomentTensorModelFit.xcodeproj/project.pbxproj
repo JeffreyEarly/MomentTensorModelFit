@@ -9,6 +9,22 @@
 /* Begin PBXBuildFile section */
 		8143E91617FC9C7E00020090 /* libgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8143E91217FC9C7E00020090 /* libgsl.a */; };
 		8143E91717FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c in Sources */ = {isa = PBXBuildFile; fileRef = 8143E91317FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c */; };
+		818FF1AB192E4F4400F08962 /* MomentTensorModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 818FF1AA192E4F4400F08962 /* MomentTensorModels.m */; };
+		818FF1B1192E5B3100F08962 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81A830F717FA2E99003D32C6 /* Foundation.framework */; };
+		818FF1B4192E5B3100F08962 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 818FF1B3192E5B3100F08962 /* main.m */; };
+		818FF1B8192E5B3100F08962 /* MomentTensorModelTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 818FF1B7192E5B3100F08962 /* MomentTensorModelTest.1 */; };
+		818FF1BC192E5B6D00F08962 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819545F2183693DA00A357A3 /* Accelerate.framework */; };
+		818FF1BD192E5B7000F08962 /* GLNumericalModelingKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */; };
+		818FF1BE192E5B8D00F08962 /* MomentTensorModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 818FF1AA192E4F4400F08962 /* MomentTensorModels.m */; };
+		818FF1C5192E5C5D00F08962 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81A830F717FA2E99003D32C6 /* Foundation.framework */; };
+		818FF1C8192E5C5D00F08962 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 818FF1C7192E5C5D00F08962 /* main.m */; };
+		818FF1CC192E5C5D00F08962 /* MomentTensorModelStatistics.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 818FF1CB192E5C5D00F08962 /* MomentTensorModelStatistics.1 */; };
+		818FF1D0192E5C8400F08962 /* GLNumericalModelingKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */; };
+		818FF1D1192E5C8600F08962 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819545F2183693DA00A357A3 /* Accelerate.framework */; };
+		818FF1D2192E5C8C00F08962 /* MomentTensorModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 818FF1AA192E4F4400F08962 /* MomentTensorModels.m */; };
+		818FF1D3192E5C9400F08962 /* EllipseErrorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545F0183688FD00A357A3 /* EllipseErrorOperation.m */; };
+		818FF1D4192E5CBF00F08962 /* ellipse_ellipse_overlap_121203.c in Sources */ = {isa = PBXBuildFile; fileRef = 8143E91317FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c */; };
+		818FF1D5192E5D5300F08962 /* libgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8143E91217FC9C7E00020090 /* libgsl.a */; };
 		819545EE18367E5F00A357A3 /* MomentEllipseFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */; };
 		819545F1183688FD00A357A3 /* EllipseErrorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545F0183688FD00A357A3 /* EllipseErrorOperation.m */; };
 		819545F3183693DA00A357A3 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819545F2183693DA00A357A3 /* Accelerate.framework */; };
@@ -19,6 +35,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		818FF1AE192E5B3100F08962 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				818FF1B8192E5B3100F08962 /* MomentTensorModelTest.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		818FF1C2192E5C5D00F08962 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				818FF1CC192E5C5D00F08962 /* MomentTensorModelStatistics.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		81A830F217FA2E99003D32C6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,6 +74,16 @@
 		8143E91517FC9C7E00020090 /* program_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program_constants.h; sourceTree = "<group>"; };
 		8143E91817FC9CFA00020090 /* gsl */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gsl; sourceTree = "<group>"; };
 		8143E91917FC9D0700020090 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		818FF1A9192E4F4400F08962 /* MomentTensorModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MomentTensorModels.h; sourceTree = "<group>"; };
+		818FF1AA192E4F4400F08962 /* MomentTensorModels.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MomentTensorModels.m; sourceTree = "<group>"; };
+		818FF1B0192E5B3100F08962 /* MomentTensorModelTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomentTensorModelTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		818FF1B3192E5B3100F08962 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		818FF1B6192E5B3100F08962 /* MomentTensorModelTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MomentTensorModelTest-Prefix.pch"; sourceTree = "<group>"; };
+		818FF1B7192E5B3100F08962 /* MomentTensorModelTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MomentTensorModelTest.1; sourceTree = "<group>"; };
+		818FF1C4192E5C5D00F08962 /* MomentTensorModelStatistics */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomentTensorModelStatistics; sourceTree = BUILT_PRODUCTS_DIR; };
+		818FF1C7192E5C5D00F08962 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		818FF1CA192E5C5D00F08962 /* MomentTensorModelStatistics-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MomentTensorModelStatistics-Prefix.pch"; sourceTree = "<group>"; };
+		818FF1CB192E5C5D00F08962 /* MomentTensorModelStatistics.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MomentTensorModelStatistics.1; sourceTree = "<group>"; };
 		819545EC18367E5F00A357A3 /* MomentEllipseFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MomentEllipseFileReader.h; sourceTree = "<group>"; };
 		819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MomentEllipseFileReader.m; sourceTree = "<group>"; };
 		819545EF183688FD00A357A3 /* EllipseErrorOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EllipseErrorOperation.h; sourceTree = "<group>"; };
@@ -52,6 +98,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		818FF1AD192E5B3100F08962 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				818FF1BD192E5B7000F08962 /* GLNumericalModelingKit.dylib in Frameworks */,
+				818FF1BC192E5B6D00F08962 /* Accelerate.framework in Frameworks */,
+				818FF1B1192E5B3100F08962 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		818FF1C1192E5C5D00F08962 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				818FF1D5192E5D5300F08962 /* libgsl.a in Frameworks */,
+				818FF1D1192E5C8600F08962 /* Accelerate.framework in Frameworks */,
+				818FF1D0192E5C8400F08962 /* GLNumericalModelingKit.dylib in Frameworks */,
+				818FF1C5192E5C5D00F08962 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		81A830F117FA2E99003D32C6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -66,10 +133,48 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		818FF1B2192E5B3100F08962 /* MomentTensorModelTest */ = {
+			isa = PBXGroup;
+			children = (
+				818FF1B3192E5B3100F08962 /* main.m */,
+				818FF1B7192E5B3100F08962 /* MomentTensorModelTest.1 */,
+				818FF1B5192E5B3100F08962 /* Supporting Files */,
+			);
+			path = MomentTensorModelTest;
+			sourceTree = "<group>";
+		};
+		818FF1B5192E5B3100F08962 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				818FF1B6192E5B3100F08962 /* MomentTensorModelTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		818FF1C6192E5C5D00F08962 /* MomentTensorModelStatistics */ = {
+			isa = PBXGroup;
+			children = (
+				818FF1C7192E5C5D00F08962 /* main.m */,
+				818FF1CB192E5C5D00F08962 /* MomentTensorModelStatistics.1 */,
+				818FF1C9192E5C5D00F08962 /* Supporting Files */,
+			);
+			path = MomentTensorModelStatistics;
+			sourceTree = "<group>";
+		};
+		818FF1C9192E5C5D00F08962 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				818FF1CA192E5C5D00F08962 /* MomentTensorModelStatistics-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		81A830EB17FA2E99003D32C6 = {
 			isa = PBXGroup;
 			children = (
 				81A830F917FA2E99003D32C6 /* MomentTensorModelFit */,
+				818FF1B2192E5B3100F08962 /* MomentTensorModelTest */,
+				818FF1C6192E5C5D00F08962 /* MomentTensorModelStatistics */,
 				81A830F617FA2E99003D32C6 /* Frameworks */,
 				81A830F517FA2E99003D32C6 /* Products */,
 			);
@@ -79,6 +184,8 @@
 			isa = PBXGroup;
 			children = (
 				81A830F417FA2E99003D32C6 /* MomentTensorModelFit */,
+				818FF1B0192E5B3100F08962 /* MomentTensorModelTest */,
+				818FF1C4192E5C5D00F08962 /* MomentTensorModelStatistics */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,6 +204,8 @@
 			isa = PBXGroup;
 			children = (
 				81A830FA17FA2E99003D32C6 /* main.m */,
+				818FF1A9192E4F4400F08962 /* MomentTensorModels.h */,
+				818FF1AA192E4F4400F08962 /* MomentTensorModels.m */,
 				819545EC18367E5F00A357A3 /* MomentEllipseFileReader.h */,
 				819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */,
 				819545EF183688FD00A357A3 /* EllipseErrorOperation.h */,
@@ -124,6 +233,40 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		818FF1AF192E5B3100F08962 /* MomentTensorModelTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 818FF1B9192E5B3100F08962 /* Build configuration list for PBXNativeTarget "MomentTensorModelTest" */;
+			buildPhases = (
+				818FF1AC192E5B3100F08962 /* Sources */,
+				818FF1AD192E5B3100F08962 /* Frameworks */,
+				818FF1AE192E5B3100F08962 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MomentTensorModelTest;
+			productName = MomentTensorModelTest;
+			productReference = 818FF1B0192E5B3100F08962 /* MomentTensorModelTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		818FF1C3192E5C5D00F08962 /* MomentTensorModelStatistics */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 818FF1CD192E5C5D00F08962 /* Build configuration list for PBXNativeTarget "MomentTensorModelStatistics" */;
+			buildPhases = (
+				818FF1C0192E5C5D00F08962 /* Sources */,
+				818FF1C1192E5C5D00F08962 /* Frameworks */,
+				818FF1C2192E5C5D00F08962 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MomentTensorModelStatistics;
+			productName = MomentTensorModelStatistics;
+			productReference = 818FF1C4192E5C5D00F08962 /* MomentTensorModelStatistics */;
+			productType = "com.apple.product-type.tool";
+		};
 		81A830F317FA2E99003D32C6 /* MomentTensorModelFit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 81A8310217FA2E99003D32C6 /* Build configuration list for PBXNativeTarget "MomentTensorModelFit" */;
@@ -163,17 +306,40 @@
 			projectRoot = "";
 			targets = (
 				81A830F317FA2E99003D32C6 /* MomentTensorModelFit */,
+				818FF1AF192E5B3100F08962 /* MomentTensorModelTest */,
+				818FF1C3192E5C5D00F08962 /* MomentTensorModelStatistics */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		818FF1AC192E5B3100F08962 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				818FF1BE192E5B8D00F08962 /* MomentTensorModels.m in Sources */,
+				818FF1B4192E5B3100F08962 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		818FF1C0192E5C5D00F08962 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				818FF1D4192E5CBF00F08962 /* ellipse_ellipse_overlap_121203.c in Sources */,
+				818FF1D3192E5C9400F08962 /* EllipseErrorOperation.m in Sources */,
+				818FF1D2192E5C8C00F08962 /* MomentTensorModels.m in Sources */,
+				818FF1C8192E5C5D00F08962 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		81A830F017FA2E99003D32C6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				8143E91717FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c in Sources */,
 				819545EE18367E5F00A357A3 /* MomentEllipseFileReader.m in Sources */,
+				818FF1AB192E4F4400F08962 /* MomentTensorModels.m in Sources */,
 				81A830FB17FA2E99003D32C6 /* main.m in Sources */,
 				819545F1183688FD00A357A3 /* EllipseErrorOperation.m in Sources */,
 			);
@@ -182,6 +348,94 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		818FF1BA192E5B3100F08962 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MomentTensorModelTest/MomentTensorModelTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		818FF1BB192E5B3100F08962 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MomentTensorModelTest/MomentTensorModelTest-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		818FF1CE192E5C5D00F08962 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MomentTensorModelStatistics/MomentTensorModelStatistics-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"\"$(SRCROOT)/MomentTensorModelFit\"",
+					"\"$(SRCROOT)/MomentTensorModelFit/gsl\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Users/jearly/Documents/Models/MomentTensorModelFit/MomentTensorModelFit,
+					"$(PROJECT_DIR)/MomentTensorModelFit",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		818FF1CF192E5C5D00F08962 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MomentTensorModelStatistics/MomentTensorModelStatistics-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"\"$(SRCROOT)/MomentTensorModelFit\"",
+					"\"$(SRCROOT)/MomentTensorModelFit/gsl\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Users/jearly/Documents/Models/MomentTensorModelFit/MomentTensorModelFit,
+					"$(PROJECT_DIR)/MomentTensorModelFit",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		81A8310017FA2E99003D32C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -293,6 +547,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		818FF1B9192E5B3100F08962 /* Build configuration list for PBXNativeTarget "MomentTensorModelTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				818FF1BA192E5B3100F08962 /* Debug */,
+				818FF1BB192E5B3100F08962 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		818FF1CD192E5C5D00F08962 /* Build configuration list for PBXNativeTarget "MomentTensorModelStatistics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				818FF1CE192E5C5D00F08962 /* Debug */,
+				818FF1CF192E5C5D00F08962 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		81A830EF17FA2E99003D32C6 /* Build configuration list for PBXProject "MomentTensorModelFit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
