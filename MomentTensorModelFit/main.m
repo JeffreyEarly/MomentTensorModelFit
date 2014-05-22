@@ -87,16 +87,16 @@ int main(int argc, const char * argv[])
             
             GLScalar * A = [[[[one_plus_sigma_over_s_div2 times: Mxx1] minus: [zeta_s times: Mxy1]] minus: [one_minus_sigma_over_s_div2 times: Myy1]] plus: tks];
             GLScalar * B = [[[[one_minus_sigma_over_s_div2 times: Mxx1] plus: [zeta_s times: Mxy1]] minus: [one_plus_sigma_over_s_div2 times: Myy1]] plus: tks];
-            GLScalar * C = [[[[[sig_s times: sig_s] minus: @(1)] times: [Mxx1 plus: Myy1]] negate] plus: [[[[sigma times: zeta] dividedBy: s2] times: @2] times: Mxy1]];
+            GLScalar * C = [[[zeta_s negate] times: [Mxx1 plus: Myy1]] plus: [[sig_s times: @2] times: Mxy1]];
             
             GLFunction *Maa = [[[exp_s_t times: one_plus_sigma_over_s_div2] times: A] plus: [[exp_minus_s_t times: one_minus_sigma_over_s_div2] times: B]];
-            Maa = [Maa plus: [C times: @(0.5)]];
+            Maa = [Maa plus: [[C times: zeta_s] times: @(0.5)]];
             Maa = [Maa minus: [[[[zeta times: zeta] times: t] plus: sigma] times: [[kappa times: @2] dividedBy: s2]]];
             GLFunction *Mbb = [[[[exp_s_t times: one_minus_sigma_over_s_div2] times: A] plus: [[exp_minus_s_t times: one_plus_sigma_over_s_div2] times: B]] negate];
-            Mbb = [Mbb plus: [C times: @(0.5)]];
+            Mbb = [Mbb plus: [[C times: zeta_s] times: @(0.5)]];
             Mbb = [Mbb minus: [[[[zeta times: zeta] times: t] minus: sigma] times: [[kappa times: @2] dividedBy: s2]]];
             GLFunction *Mab = [[[[exp_s_t times: zeta_s] times: A] minus: [[exp_minus_s_t times: zeta_s] times: B]] times: @(0.5)];
-            Mab = [Mab plus: [[C times: @(0.5)] times: [sigma dividedBy: zeta]]];
+            Mab = [Mab plus: [[C times: @(0.5)] times: sig_s]];
             Mab = [Mab minus: [[[zeta times: sigma] times: t] times: [[kappa times: @2] dividedBy: s2]]];
             
             GLFunction *Mxx = [[[Maa times: cos2] plus: [Mbb times: sin2]] plus: [Mab times: [cossin times: @(-2.)]]];
@@ -156,6 +156,7 @@ int main(int argc, const char * argv[])
 		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
         folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
         folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-strained-diffusive/";
+		folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-vorticity-strained-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
@@ -184,7 +185,7 @@ int main(int argc, const char * argv[])
 			
 			
 			GLFloat kappaScale = 0.1;
-			GLScalar *kappa = [GLScalar scalarWithValue: log(0.0001/kappaScale) forEquation: equation];
+			GLScalar *kappa = [GLScalar scalarWithValue: log(0.1/kappaScale) forEquation: equation];
 			GLScalar *kappaDelta = [GLScalar scalarWithValue: 2.0 forEquation: equation];
 			
 			GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
@@ -246,58 +247,67 @@ int main(int argc, const char * argv[])
             sigmaScale = 1e-5;
             sigma = [GLScalar scalarWithValue: log(1E-5/sigmaScale) forEquation: equation];
             
-            GLFloat zetaScale = 1E-6;
-			GLScalar *zeta = [GLScalar scalarWithValue: log(1e-6/zetaScale) forEquation: equation];
-			GLScalar *zetaDelta = [GLScalar scalarWithValue: 0.2 forEquation: equation];
+			
+			
+            GLFloat sScale = 1E-6;
+			GLScalar *s = [GLScalar scalarWithValue: log(1e-6/sScale) forEquation: equation];
+			GLScalar *sDelta = [GLScalar scalarWithValue: 0.5 forEquation: equation];
+			
+			GLScalar *alpha = [GLScalar scalarWithValue: 0 forEquation: equation];
+			GLScalar *alphaDelta = [GLScalar scalarWithValue: 1.0 forEquation: equation];
             
             // initializing with the results from the previous calculation. we can use log searches if we look for both positive and negative vorticity.
-//            GLMinimizationOperation *minimizer_positive = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
-//				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
-//				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
-//                GLScalar *zetaUnscaled = [[xArray[3] exponentiate] times: @(zetaScale)];
-//				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-//				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
-//				
-//				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
-//				
-//				return error.result[0];
-//			}];
-//            NSArray *posResults = minimizer_positive.result;
-//            
-//			GLMinimizationOperation *minimizer_negative = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma, theta, zeta] withDeltas: @[kappaDelta, sigmaDelta, thetaDelta, zetaDelta] forFunction:^(NSArray *xArray) {
-//				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
-//				GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
-//                GLScalar *zetaUnscaled = [[[xArray[3] exponentiate] times: @(zetaScale)] negate];
-//				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-//				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
-//				
-//				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
-//				
-//				return error.result[0];
-//			}];
-//            NSArray *negResults = minimizer_negative.result;
-//            
-//			GLScalar *minPos = posResults[4];
-//			GLScalar *minNeg = negResults[4];
-//			GLFloat pos = *(minPos.pointerValue);
-//			GLFloat neg = *(minNeg.pointerValue);
-//			
-//			results = pos < neg ? posResults : negResults;
-//			
-//			minKappa = [[results[0] exponentiate] times: @(kappaScale)];
-//			minSigma = [[results[1] exponentiate] times: @(sigmaScale)];
-//            minTheta = results[2];
-//            GLScalar *minZeta = pos < neg ? [[results[3] exponentiate] times: @(zetaScale)] : [[[results[3] exponentiate] times: @(zetaScale)] negate];
-//			minError = results[4];
-//			
-//			[outputData appendFormat: @"model3_error(%lu)=%g; model3_kappa(%lu)=%g; model3_sigma(%lu)=%g; model3_theta(%lu)=%g; model3_zeta(%lu)=%g;\n", i, *(minError.pointerValue), i, *(minKappa.pointerValue), i, *(minSigma.pointerValue), i, *(minTheta.pointerValue), i, *(minZeta.pointerValue)];
-//			
-//			NSLog(@"%@---strain-vorticity-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+            GLMinimizationOperation *minimizer_positive = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, s, theta, alpha] withDeltas: @[kappaDelta, sDelta, thetaDelta, alphaDelta] forFunction:^(NSArray *xArray) {
+				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+				GLScalar *sUnscaled = [[xArray[1] exponentiate] times: @(sScale)];
+				GLScalar *sigmaUnscaled = [sUnscaled times: [xArray[3] cosh]];
+                GLScalar *zetaUnscaled = [sUnscaled times: [xArray[3] sinh]];
+				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
+				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+				
+				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+				
+				return error.result[0];
+			}];
+            NSArray *posResults = minimizer_positive.result;
+            
+			alphaDelta = [GLScalar scalarWithValue: -1.0 forEquation: equation];
+			GLMinimizationOperation *minimizer_negative = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, s, theta, alpha] withDeltas: @[kappaDelta, sDelta, thetaDelta, alphaDelta] forFunction:^(NSArray *xArray) {
+				GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+				GLScalar *sUnscaled = [[xArray[1] exponentiate] times: @(sScale)];
+				GLScalar *sigmaUnscaled = [sUnscaled times: [xArray[3] cosh]];
+                GLScalar *zetaUnscaled = [sUnscaled times: [xArray[3] sinh]];
+				NSArray *tensorComps = strainVorticityDiffusivityModel( file.Mxx0, file.Myy0, file.Mxy0, file.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
+				NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+				
+				EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[file.a, file.b, file.angle]];
+				
+				return error.result[0];
+			}];
+            NSArray *negResults = minimizer_negative.result;
+            
+			GLScalar *minPos = posResults[4];
+			GLScalar *minNeg = negResults[4];
+			GLFloat pos = *(minPos.pointerValue);
+			GLFloat neg = *(minNeg.pointerValue);
+			
+			results = pos < neg ? posResults : negResults;
+			
+			minKappa = [[results[0] exponentiate] times: @(kappaScale)];
+			GLScalar *minS = [[results[1] exponentiate] times: @(sScale)];
+			minSigma = [minS times: [results[3] cosh]];
+            minTheta = results[2];
+            GLScalar *minZeta = [minS times: [results[3] sinh]];
+			minError = results[4];
+			
+			[outputData appendFormat: @"model3_error(%lu)=%g; model3_kappa(%lu)=%g; model3_sigma(%lu)=%g; model3_theta(%lu)=%g; model3_zeta(%lu)=%g;\n", i, *(minError.pointerValue), i, *(minKappa.pointerValue), i, *(minSigma.pointerValue), i, *(minTheta.pointerValue), i, *(minZeta.pointerValue)];
+			
+			NSLog(@"%@---strain-vorticity-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
             
 			i++;
         }
 		
-		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters_error_method2.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters_area_divergence.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
     }
     return 0;
 }
