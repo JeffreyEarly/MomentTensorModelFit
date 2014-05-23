@@ -11,6 +11,8 @@
 
 @interface MomentTensorModels : NSObject
 
+- (MomentTensorModels *) initWithXPositions: (GLFunction *) x yPositions: (GLFunction *) y time: (GLFunction *) t;
+
 - (MomentTensorModels *) initWithMxx: (GLFunction *) Mxx Myy: (GLFunction *) Myy Mxy: (GLFunction *) Mxy time: (GLFunction *) t;
 
 - (MomentTensorModels *) initWithA: (GLFunction *) a b: (GLFunction *) b theta: (GLFunction *) theta time: (GLFunction *) t;
@@ -46,3 +48,5 @@ NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mx
 // Simple little utility function that converts tensor components, into ellipse components
 NSArray *tensorCompsToEllipseComps( NSArray *tensorComp );
 
+// Returns a, b, theta---semi-major, semi-minor, and angle of semi-major axis.
+NSArray *ellipseComponentsFromMatrixComponents( GLFunction *Mxx, GLFunction *Myy, GLFunction *Mxy);

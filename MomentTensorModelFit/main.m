@@ -12,6 +12,7 @@
 #import "MomentTensorModels.h"
 #import "MomentEllipseFileReader.h"
 #import "EllipseErrorOperation.h"
+#import "DrifterTracksFileReader.h"
 
 int main(int argc, const char * argv[])
 {
@@ -20,6 +21,10 @@ int main(int argc, const char * argv[])
         
         GLEquation *equation = [[GLEquation alloc] init];
         
+		NSString *filePath =  @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho1Drifters.txt";
+		DrifterTracksFileReader *trackReader = [[DrifterTracksFileReader alloc] initWithURL: [NSURL fileURLWithPath: filePath] equation: equation];
+		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
+		
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
 		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";

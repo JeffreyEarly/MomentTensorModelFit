@@ -26,6 +26,35 @@
 
 @implementation MomentTensorModels
 
+- (MomentTensorModels *) initWithXPositions: (GLFunction *) x yPositions: (GLFunction *) y time: (GLFunction *) t
+{
+	if ((self=[super init])) {
+		
+		GLFunction *x_com = [x mean: 1];
+		GLFunction *y_com = [y mean: 1];
+		
+		GLFunction *q = [x plus: [x_com negate]];
+		GLFunction *r = [y plus: [y_com negate]];
+		
+		self.Mxx = [[q times: q] mean: 1];
+		self.Myy = [[r times: r] mean: 1];
+		self.Mxy = [[q times: r] mean: 1];
+		self.t = t;
+		self.equation = x.equation;
+		self.Mxx0 = self.Mxx.pointerValue[0];
+		self.Myy0 = self.Myy.pointerValue[0];
+		self.Mxy0 = self.Mxy.pointerValue[0];
+		
+		NSArray *result = ellipseComponentsFromMatrixComponents(self.Mxx, self.Myy, self.Mxy);
+		//NSArray *result = tensorCompsToEllipseComps(@[self.Mxx, self.Myy, self.Mxy]);
+		self.a = result[0];
+		self.b = result[1];
+		self.theta = result[2];
+		
+	}
+	return self;
+}
+
 - (MomentTensorModels *) initWithMxx: (GLFunction *) Mxx Myy: (GLFunction *) Myy Mxy: (GLFunction *) Mxy time: (GLFunction *) t
 {
 	if ((self=[super init])) {
@@ -37,6 +66,12 @@
 		self.Mxy0 = self.Mxy.pointerValue[0];
 		self.t = t;
 		self.equation = self.Mxx.equation;
+		
+		NSArray *result = ellipseComponentsFromMatrixComponents(self.Mxx, self.Myy, self.Mxy);
+		//NSArray *result = tensorCompsToEllipseComps(@[self.Mxx, self.Myy, self.Mxy]);
+		self.a = result[0];
+		self.b = result[1];
+		self.theta = result[2];
 	}
 	return self;
 }
@@ -63,14 +98,15 @@
 
 - (NSArray *) bestFitToDiffusivityModel
 {
-	GLFloat kappaScale = 0.1;
-	GLScalar *kappa = [GLScalar scalarWithValue: log(0.1/kappaScale) forEquation: self.equation];
+	GLFloat kappaScale = 1.0;
+	GLScalar *kappa = [GLScalar scalarWithValue: log(1./kappaScale) forEquation: self.equation];
 	GLScalar *kappaDelta = [GLScalar scalarWithValue: 2.0 forEquation: self.equation];
-	
+		
 	GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
 		GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
 		NSArray *tensorComps = diffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled);
-		NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		//NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		
@@ -271,6 +307,22 @@ NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mx
 	
 	return @[Mxx, Myy, Mxy];
 };
+
+NSArray *ellipseComponentsFromMatrixComponents( GLFunction *Mxx, GLFunction *Myy, GLFunction *Mxy)
+{
+	// For a real symmetric matrix [a b; b d], the eigenvalues are
+	// 2*lambda = (a+d) \pm \sqrt{ (a-d)^2 + 4b^2 }
+	GLFunction *a_plus_d = [Mxx plus: Myy];
+	GLFunction *a_minus_d = [Mxx minus: Myy];
+	GLFunction *radical = [[[a_minus_d times: a_minus_d] plus: [[Mxy times: Mxy] times: @4]] sqrt];
+	GLFunction *lambda_big = [[a_plus_d plus: radical] times: @(0.5)];
+	GLFunction *lambda_small = [[a_plus_d minus: radical] times: @(0.5)];
+	
+	//GLFunction *theta = [[lambda_big minus: Mxx] atan2: Myy];
+	GLFunction *theta = [Mxy atan2: [lambda_big minus: Myy]];
+	
+	return @[[lambda_big sqrt], [lambda_small sqrt], theta];
+}
 
 // Simple little utility function that converts tensor components, into ellipse components
 NSArray *tensorCompsToEllipseComps( NSArray *tensorComp )

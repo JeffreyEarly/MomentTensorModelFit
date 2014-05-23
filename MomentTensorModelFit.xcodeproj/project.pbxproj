@@ -32,6 +32,8 @@
 		81A830FB17FA2E99003D32C6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 81A830FA17FA2E99003D32C6 /* main.m */; };
 		81A830FF17FA2E99003D32C6 /* MomentTensorModelFit.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */; };
 		81AEF69017FBA35300F87614 /* GLNumericalModelingKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */; };
+		81E9958B192FB632008F9DB8 /* DrifterTracksFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */; };
+		81E9958C192FB632008F9DB8 /* DrifterTracksFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -95,6 +97,8 @@
 		81A830FD17FA2E99003D32C6 /* MomentTensorModelFit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MomentTensorModelFit-Prefix.pch"; sourceTree = "<group>"; };
 		81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MomentTensorModelFit.1; sourceTree = "<group>"; };
 		81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = GLNumericalModelingKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		81E99589192FB632008F9DB8 /* DrifterTracksFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrifterTracksFileReader.h; sourceTree = "<group>"; };
+		81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrifterTracksFileReader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +212,8 @@
 				818FF1AA192E4F4400F08962 /* MomentTensorModels.m */,
 				819545EC18367E5F00A357A3 /* MomentEllipseFileReader.h */,
 				819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */,
+				81E99589192FB632008F9DB8 /* DrifterTracksFileReader.h */,
+				81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */,
 				819545EF183688FD00A357A3 /* EllipseErrorOperation.h */,
 				819545F0183688FD00A357A3 /* EllipseErrorOperation.m */,
 				81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */,
@@ -326,6 +332,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				81E9958C192FB632008F9DB8 /* DrifterTracksFileReader.m in Sources */,
 				818FF1D4192E5CBF00F08962 /* ellipse_ellipse_overlap_121203.c in Sources */,
 				818FF1D3192E5C9400F08962 /* EllipseErrorOperation.m in Sources */,
 				818FF1D2192E5C8C00F08962 /* MomentTensorModels.m in Sources */,
@@ -338,6 +345,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8143E91717FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c in Sources */,
+				81E9958B192FB632008F9DB8 /* DrifterTracksFileReader.m in Sources */,
 				819545EE18367E5F00A357A3 /* MomentEllipseFileReader.m in Sources */,
 				818FF1AB192E4F4400F08962 /* MomentTensorModels.m in Sources */,
 				81A830FB17FA2E99003D32C6 /* main.m in Sources */,
@@ -554,6 +562,7 @@
 				818FF1BB192E5B3100F08962 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		818FF1CD192E5C5D00F08962 /* Build configuration list for PBXNativeTarget "MomentTensorModelStatistics" */ = {
 			isa = XCConfigurationList;
@@ -562,6 +571,7 @@
 				818FF1CF192E5C5D00F08962 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		81A830EF17FA2E99003D32C6 /* Build configuration list for PBXProject "MomentTensorModelFit" */ = {
 			isa = XCConfigurationList;

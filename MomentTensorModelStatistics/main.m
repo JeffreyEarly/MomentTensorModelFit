@@ -15,10 +15,10 @@ int main(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
-		GLFloat floatSpacing = 0;
+		GLFloat floatSpacing = 10;
 		GLFloat maxTime = 6*86400;
 		GLFloat timeStep = 30*60;
-		NSUInteger nParticles = 1000;
+		NSInteger nParticles = 10;
 	    GLEquation *equation = [[GLEquation alloc] init];
 		GLDimension *floatDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: nParticles domainMin: 1 length: nParticles];
 		GLFunction *xPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
@@ -26,19 +26,20 @@ int main(int argc, const char * argv[])
 		
 		// Layout the drifters in a cross pattern, just the real drifters
 		NSUInteger iFloat = 0;
-		for (NSInteger i=-2; i<=2; i++) {
-			xPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing;
+		GLFloat length = ((GLFloat) nParticles/2 - 1)*floatSpacing;
+		for (NSInteger i=0; i<nParticles/2; i++) {
+			xPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
 			yPosition.pointerValue[iFloat] = ((GLFloat) i)*0;
 			iFloat++;
 		}
-		for (NSInteger i=-2; i<=2; i++) {
+		for (NSInteger i=0; i<nParticles/2; i++) {
 			//if (i==0) continue;
 			xPosition.pointerValue[iFloat] = ((GLFloat) i)*0;
-			yPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing;
+			yPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
 			iFloat++;
 		}
 	    
-		GLFloat kappa = 10; // m^2/s
+		GLFloat kappa = 1; // m^2/s
         GLFloat norm = sqrt(timeStep*2*kappa);
         norm = sqrt(36./10.)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
         // RK4: dt/3 f(0) + dt/6 f(1) + dt/6 *f(4) + dt/3*f(3)
@@ -55,6 +56,7 @@ int main(int argc, const char * argv[])
 		}];
 		
 		GLDimension *tDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 1+round(maxTime/timeStep) domainMin: 0 length: maxTime];
+		GLFunction *t = [GLFunction functionOfRealTypeFromDimension: tDim withDimensions: @[tDim] forEquation: equation];
 		NSArray *newPositions = [integrator integrateAlongDimension: tDim];
 				
 		GLScalar *meanSquareSeparation0 = [[[xPosition times: xPosition] plus: [yPosition times: yPosition]] mean];
@@ -62,11 +64,17 @@ int main(int argc, const char * argv[])
 		
 		GLFloat a = *(meanSquareSeparation0.pointerValue);
         GLFloat b = meanSquareSeparation.pointerValue[meanSquareSeparation.nDataPoints-1];
-        //[meanSquareSeparation0 dumpToConsole];
-        //[meanSquareSeparation dumpToConsole];
         
         GLFloat kappaDeduced = (0.25)*(b-a)/maxTime;
         NSLog(@"kappa: %f, actual kappa: %f", kappa, kappaDeduced);
+		
+		MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
+		NSArray *result = [models bestFitToDiffusivityModel];
+		
+		GLScalar *minError = result[0];
+		GLScalar *minKappa = result[1];
+		
+		NSLog(@"diffusivity model total error: %f @ (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
 	}
     return 0;
 }
