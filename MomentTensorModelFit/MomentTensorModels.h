@@ -9,6 +9,24 @@
 #import <Foundation/Foundation.h>
 #import <GLNumericalModelingKit/GLNumericalModelingKit.h>
 
+@interface MomentTensorModels : NSObject
+
+- (MomentTensorModels *) initWithMxx: (GLFunction *) Mxx Myy: (GLFunction *) Myy Mxy: (GLFunction *) Mxy time: (GLFunction *) t;
+
+- (MomentTensorModels *) initWithA: (GLFunction *) a b: (GLFunction *) b theta: (GLFunction *) theta time: (GLFunction *) t;
+
+// Returns error, kappa
+- (NSArray *) bestFitToDiffusivityModel;
+
+// Returns error, kappa, sigma, theta
+- (NSArray *) bestFitToStrainDiffusivityModel;
+
+// Returns error, kappa, sigma, theta, zeta
+- (NSArray *) bestFitToVorticityStrainDiffusivityModel;
+
+@end
+
+
 
 // This model requires initial conditions (Mxx0, Myy0, Mxy0), and a one-dimensional time variable t.
 // It takes one parameter, kappa.
@@ -27,3 +45,4 @@ NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mx
 
 // Simple little utility function that converts tensor components, into ellipse components
 NSArray *tensorCompsToEllipseComps( NSArray *tensorComp );
+

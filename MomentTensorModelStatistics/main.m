@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
 		GLFloat floatSpacing = 0;
 		GLFloat maxTime = 6*86400;
 		GLFloat timeStep = 30*60;
-		NSUInteger nParticles = 100000;
+		NSUInteger nParticles = 1000;
 	    GLEquation *equation = [[GLEquation alloc] init];
 		GLDimension *floatDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: nParticles domainMin: 1 length: nParticles];
 		GLFunction *xPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
