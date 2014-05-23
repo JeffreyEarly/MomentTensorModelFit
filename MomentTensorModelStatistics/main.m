@@ -11,6 +11,17 @@
 #import <GLNumericalModelingKit/GLOperationOptimizer.h>
 #import "MomentTensorModels.h"
 
+void displayKappaSimple( GLFunction *t, GLFunction *xPosition, GLFunction *yPosition, GLFloat kappa)
+{
+	GLFunction *meanSquareSeparation = [[[xPosition times: xPosition] plus: [yPosition times: yPosition]] mean: 1];
+	
+	GLFloat a = meanSquareSeparation.pointerValue[0];
+	GLFloat b = meanSquareSeparation.pointerValue[meanSquareSeparation.nDataPoints-1];
+	
+	GLFloat kappaDeduced = (0.25)*(b-a)/t.pointerValue[t.nDataPoints-1];
+	NSLog(@"kappa: %f, actual kappa: %f", kappa, kappaDeduced);
+}
+
 int main(int argc, const char * argv[])
 {
 
@@ -57,25 +68,24 @@ int main(int argc, const char * argv[])
 		
 		GLDimension *tDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 1+round(maxTime/timeStep) domainMin: 0 length: maxTime];
 		GLFunction *t = [GLFunction functionOfRealTypeFromDimension: tDim withDimensions: @[tDim] forEquation: equation];
-		NSArray *newPositions = [integrator integrateAlongDimension: tDim];
-				
-		GLScalar *meanSquareSeparation0 = [[[xPosition times: xPosition] plus: [yPosition times: yPosition]] mean];
-		GLFunction *meanSquareSeparation = [[[newPositions[0] times: newPositions[0]] plus: [newPositions[1] times: newPositions[1]]] mean: 1];
 		
-		GLFloat a = *(meanSquareSeparation0.pointerValue);
-        GLFloat b = meanSquareSeparation.pointerValue[meanSquareSeparation.nDataPoints-1];
-        
-        GLFloat kappaDeduced = (0.25)*(b-a)/maxTime;
-        NSLog(@"kappa: %f, actual kappa: %f", kappa, kappaDeduced);
-		
-		MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
-		NSArray *result = [models bestFitToDiffusivityModel];
-		
-		GLScalar *minError = result[0];
-		GLScalar *minKappa = result[1];
-		
-		NSLog(@"diffusivity model total error: %f @ (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+		for (NSUInteger i=0; i<10; i++) {
+			
+			NSArray *newPositions = [integrator integrateAlongDimension: tDim];
+					
+			displayKappaSimple( t, newPositions[0],  newPositions[1], kappa);
+			
+			MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
+			NSArray *result = [models bestFitToDiffusivityModel];
+			
+			GLScalar *minError = result[0];
+			GLScalar *minKappa = result[1];
+			
+			NSLog(@"diffusivity model total error: %f @ (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+		}
 	}
     return 0;
 }
+
+
 
