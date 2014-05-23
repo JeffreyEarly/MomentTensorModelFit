@@ -28,9 +28,9 @@ int main(int argc, const char * argv[])
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
 		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
-        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
-        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-strained-diffusive/";
-		folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-vorticity-strained-diffusive/";
+//        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
+//        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-strained-diffusive/";
+//		folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-vorticity-strained-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];

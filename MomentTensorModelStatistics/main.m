@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
 			iFloat++;
 		}
 	    
-		GLFloat kappa = 1; // m^2/s
+		GLFloat kappa = 0.2; // m^2/s
         GLFloat norm = sqrt(timeStep*2*kappa);
         norm = sqrt(36./10.)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
         // RK4: dt/3 f(0) + dt/6 f(1) + dt/6 *f(4) + dt/3*f(3)
@@ -81,7 +81,28 @@ int main(int argc, const char * argv[])
 			GLScalar *minError = result[0];
 			GLScalar *minKappa = result[1];
 			
-			NSLog(@"diffusivity model total error: %f @ (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+			NSLog(@"diffusivity model\t\t\t\t\terror: %f (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+			
+			result = [models bestFitToStrainDiffusivityModel];
+			
+			minError = result[0];
+			minKappa = result[1];
+			GLScalar *minSigma = result[2];
+			GLScalar *minTheta = result[3];
+			
+			NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
+            
+            
+			result = [models bestFitToVorticityStrainDiffusivityModel];
+			
+			minError = result[0];
+			minKappa = result[1];
+			minSigma = result[2];
+			minTheta = result[3];
+			GLScalar *minZeta = result[4];
+						
+			NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+
 		}
 	}
     return 0;

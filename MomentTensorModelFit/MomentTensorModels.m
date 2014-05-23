@@ -139,7 +139,8 @@
 		GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
 		GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
 		NSArray *tensorComps = strainDiffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled, sigmaUnscaled, xArray[2]);
-		NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		//NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		
@@ -177,7 +178,8 @@
 		GLScalar *sigmaUnscaled = [sUnscaled times: [xArray[3] cosh]];
 		GLScalar *zetaUnscaled = [sUnscaled times: [xArray[3] sinh]];
 		NSArray *tensorComps = strainVorticityDiffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-		NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		//NSArray *ellipseComps = tensorCompsToEllipseComps( tensorComps );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		
