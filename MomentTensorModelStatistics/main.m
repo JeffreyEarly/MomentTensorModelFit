@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
 		}
 		
 		NSMutableString *outputData = [NSMutableString string];
-		for (NSUInteger iModel=0; iModel<3; iModel++)
+		for (NSUInteger iModel=0; iModel<2; iModel++)
 		{
 			GLFloat kappa = 0.2; // m^2/s
 			
@@ -68,9 +68,9 @@ int main(int argc, const char * argv[])
 			} else if (iModel == 1) {
 				name = @"syntheticStrainDiffusive";
 				GLFloat sigma = 3.4e-6;
-				GLFloat theta = -32.249280*M_PI/180;
-				GLFloat sigma_n = sigma*cos(2*theta);
-				GLFloat sigma_s = sigma*sin(2*theta);
+				GLFloat theta = -32.249280*M_PI/180.;
+				GLFloat sigma_n = sigma*cos(2.*theta);
+				GLFloat sigma_s = sigma*sin(2.*theta);
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @(sigma_s/2.)]];
 					GLFunction *v2 = [[xpos times: @(sigma_s/2.)] plus: [ypos times: @(-sigma_n/2.)]];
@@ -79,9 +79,9 @@ int main(int argc, const char * argv[])
 			} else {
 				name = @"syntheticVorticityStrainDiffusive";
 				GLFloat sigma = 3.4e-6;
-				GLFloat theta = -32.249280*M_PI/180;
-				GLFloat sigma_n = sigma*cos(2*theta);
-				GLFloat sigma_s = sigma*sin(2*theta);
+				GLFloat theta = -32.249280*M_PI/180.;
+				GLFloat sigma_n = sigma*cos(2.*theta);
+				GLFloat sigma_s = sigma*sin(2.*theta);
 				GLFloat zeta = 1e-6;
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @((sigma_s-zeta)/2.)]];
@@ -102,9 +102,7 @@ int main(int argc, const char * argv[])
 				xStep = [xStep times: @(norm)];
 				yStep = [yStep times: @(norm)];
 				
-				addUV(y[0],y[1],xStep,yStep);
-				
-				return @[xStep, yStep];
+				return addUV(y[0],y[1],xStep,yStep);
 			}];
 			
 			GLDimension *tDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 1+round(maxTime/timeStep) domainMin: 0 length: maxTime];
