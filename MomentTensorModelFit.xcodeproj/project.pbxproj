@@ -91,6 +91,7 @@
 		819545EF183688FD00A357A3 /* EllipseErrorOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EllipseErrorOperation.h; sourceTree = "<group>"; };
 		819545F0183688FD00A357A3 /* EllipseErrorOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EllipseErrorOperation.m; sourceTree = "<group>"; };
 		819545F2183693DA00A357A3 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		81A4859D19352FDC00D2B45B /* gsl_errno.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gsl_errno.h; path = gsl/gsl_errno.h; sourceTree = "<group>"; };
 		81A830F417FA2E99003D32C6 /* MomentTensorModelFit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomentTensorModelFit; sourceTree = BUILT_PRODUCTS_DIR; };
 		81A830F717FA2E99003D32C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		81A830FA17FA2E99003D32C6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -225,6 +226,7 @@
 		81A830FC17FA2E99003D32C6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				81A4859D19352FDC00D2B45B /* gsl_errno.h */,
 				8143E91817FC9CFA00020090 /* gsl */,
 				8143E91217FC9C7E00020090 /* libgsl.a */,
 				8143E91917FC9D0700020090 /* config.h */,

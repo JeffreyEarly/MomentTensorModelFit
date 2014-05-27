@@ -26,7 +26,9 @@ int main(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
-		GLFloat floatSpacing = 10;
+		
+		
+		GLFloat floatSpacing = 500;
 		GLFloat maxTime = 6*86400;
 		GLFloat timeStep = 30*60;
 		NSInteger nParticles = 10;
@@ -49,61 +51,109 @@ int main(int argc, const char * argv[])
 			yPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
 			iFloat++;
 		}
-	    
-		GLFloat kappa = 0.2; // m^2/s
-        GLFloat norm = sqrt(timeStep*2*kappa);
-        norm = sqrt(36./10.)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
-        // RK4: dt/3 f(0) + dt/6 f(1) + dt/6 *f(4) + dt/3*f(3)
-        // sqrt of ( (1/3)^2 + (1/6)^ + (1/6)^2 + (1/3)^2 )
-        
-        NSArray *y=@[xPosition, yPosition];
-        GLRungeKuttaOperation *integrator = [GLRungeKuttaOperation rungeKutta4AdvanceY: y stepSize: timeStep fFromTY:^(GLScalar *time, NSArray *yNew) {
-            GLFunction *xStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
-            GLFunction *yStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
-            xStep = [xStep times: @(norm)];
-            yStep = [yStep times: @(norm)];
-            
-			return @[xStep, yStep];
-		}];
 		
-		GLDimension *tDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 1+round(maxTime/timeStep) domainMin: 0 length: maxTime];
-		GLFunction *t = [GLFunction functionOfRealTypeFromDimension: tDim withDimensions: @[tDim] forEquation: equation];
-		
-		for (NSUInteger i=0; i<10; i++) {
+		NSMutableString *outputData = [NSMutableString string];
+		for (NSUInteger iModel=0; iModel<3; iModel++)
+		{
+			GLFloat kappa = 0.2; // m^2/s
 			
-			NSArray *newPositions = [integrator integrateAlongDimension: tDim];
-					
-			displayKappaSimple( t, newPositions[0],  newPositions[1], kappa);
+			NSString *name;
+			NSUInteger totalIterations = 100;
+			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
+			if (iModel == 0) {
+				name = @"syntheticDiffusive";
+				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
+					return @[u,v];
+				};
+			} else if (iModel == 1) {
+				name = @"syntheticStrainDiffusive";
+				GLFloat sigma = 3.4e-6;
+				GLFloat theta = -32.249280*M_PI/180;
+				GLFloat sigma_n = sigma*cos(2*theta);
+				GLFloat sigma_s = sigma*sin(2*theta);
+				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
+					GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @(sigma_s/2.)]];
+					GLFunction *v2 = [[xpos times: @(sigma_s/2.)] plus: [ypos times: @(-sigma_n/2.)]];
+					return @[[u plus: u2],[v plus: v2]];
+				};
+			} else {
+				name = @"syntheticVorticityStrainDiffusive";
+				GLFloat sigma = 3.4e-6;
+				GLFloat theta = -32.249280*M_PI/180;
+				GLFloat sigma_n = sigma*cos(2*theta);
+				GLFloat sigma_s = sigma*sin(2*theta);
+				GLFloat zeta = 1e-6;
+				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
+					GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @((sigma_s-zeta)/2.)]];
+					GLFunction *v2 = [[xpos times: @((sigma_s + zeta)/2.)] plus: [ypos times: @(-sigma_n/2.)]];
+					return @[[u plus: u2],[v plus: v2]];
+				};
+			}
 			
-			MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
-			NSArray *result = [models bestFitToDiffusivityModel];
+			GLFloat norm = sqrt(timeStep*2*kappa);
+			norm = sqrt(36./10.)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
+			// RK4: dt/3 f(0) + dt/6 f(1) + dt/6 *f(4) + dt/3*f(3)
+			// sqrt of ( (1/3)^2 + (1/6)^ + (1/6)^2 + (1/3)^2 )
 			
-			GLScalar *minError = result[0];
-			GLScalar *minKappa = result[1];
+			NSArray *y=@[xPosition, yPosition];
+			GLRungeKuttaOperation *integrator = [GLRungeKuttaOperation rungeKutta4AdvanceY: y stepSize: timeStep fFromTY:^(GLScalar *time, NSArray *yNew) {
+				GLFunction *xStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
+				GLFunction *yStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
+				xStep = [xStep times: @(norm)];
+				yStep = [yStep times: @(norm)];
+				
+				addUV(y[0],y[1],xStep,yStep);
+				
+				return @[xStep, yStep];
+			}];
 			
-			NSLog(@"diffusivity model\t\t\t\t\terror: %f (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+			GLDimension *tDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 1+round(maxTime/timeStep) domainMin: 0 length: maxTime];
+			GLFunction *t = [GLFunction functionOfRealTypeFromDimension: tDim withDimensions: @[tDim] forEquation: equation];
 			
-			result = [models bestFitToStrainDiffusivityModel];
 			
-			minError = result[0];
-			minKappa = result[1];
-			GLScalar *minSigma = result[2];
-			GLScalar *minTheta = result[3];
-			
-			NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
-            
-            
-			result = [models bestFitToVorticityStrainDiffusivityModel];
-			
-			minError = result[0];
-			minKappa = result[1];
-			minSigma = result[2];
-			minTheta = result[3];
-			GLScalar *minZeta = result[4];
+			[outputData appendFormat:@"%@.model1(%lu) = struct('kappa', 0.0, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, totalIterations];
+			[outputData appendFormat:@"%@.model2(%lu) = struct('kappa', 0.0, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, totalIterations];
+			[outputData appendFormat:@"%@.model3(%lu) = struct('kappa', 0.0, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, totalIterations];
+			for (NSUInteger i=0; i<totalIterations; i++) {
+				
+				NSArray *newPositions = [integrator integrateAlongDimension: tDim];
 						
-			NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+				displayKappaSimple( t, newPositions[0],  newPositions[1], kappa);
+				
+				MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
+				NSArray *result = [models bestFitToDiffusivityModel];
+				
+				GLScalar *minError = result[0];
+				GLScalar *minKappa = result[1];
+				
+				[outputData appendFormat: @"%@.model1(%lu) = struct('kappa', %f, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', %f);\n", name, i+1, *(minKappa.pointerValue),*(minError.pointerValue)];
+				NSLog(@"diffusivity model\t\t\t\t\terror: %f (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+				
+				result = [models bestFitToStrainDiffusivityModel];
+				
+				minError = result[0];
+				minKappa = result[1];
+				GLScalar *minSigma = result[2];
+				GLScalar *minTheta = result[3];
+				
+				[outputData appendFormat: @"%@.model2(%lu) = struct('kappa', %f, 'sigma', %f, 'theta', %f, 'zeta', 0.0, 'error', %f);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minError.pointerValue)];
+				NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
+				
+				
+				result = [models bestFitToVorticityStrainDiffusivityModel];
+				
+				minError = result[0];
+				minKappa = result[1];
+				minSigma = result[2];
+				minTheta = result[3];
+				GLScalar *minZeta = result[4];
+							
+				[outputData appendFormat: @"%@.model3(%lu) = struct('kappa', %f, 'sigma', %f, 'theta', %f, 'zeta', %f, 'error', %f);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minZeta.pointerValue),*(minError.pointerValue)];
+				NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
 
+			}
 		}
+		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitParameters_Synthetic_Models.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 	}
     return 0;
 }

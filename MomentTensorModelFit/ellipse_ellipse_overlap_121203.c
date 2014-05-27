@@ -48,6 +48,7 @@
 #include "gsl_test.h"
 #include "gsl_ieee_utils.h"
 #include "gsl_poly.h"
+#include "gsl_errno.h"
 
 #define REAL(z,i) ((z)[2*(i)])
 
@@ -284,6 +285,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		int ret;
 		double z[10];
 		gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (5);//5 coeff
+		gsl_set_error_handler_off();
 		ret = gsl_poly_complex_solve (cy, 5, w, z);
 		for (i = 0; i < 4; i++)
 		{
