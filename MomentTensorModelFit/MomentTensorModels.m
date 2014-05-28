@@ -157,15 +157,24 @@
 
 - (NSArray *) bestFitToVorticityStrainDiffusivityModel
 {
+	GLScalar *kappa = [GLScalar scalarWithValue: 0.1 forEquation: self.equation];
+	GLScalar *sScale = [GLScalar scalarWithValue: 1e-6 forEquation: self.equation];
+	GLScalar *theta = [GLScalar scalarWithValue: 0.0 forEquation: self.equation];
+	return [self bestFitToVorticityStrainDiffusivityModelWithStartPoint: @[kappa, sScale, theta]];
+}
+
+
+- (NSArray *) bestFitToVorticityStrainDiffusivityModelWithStartPoint: (NSArray *) startPoint
+{
 	GLFloat kappaScale = 0.1;
-	GLScalar *kappa = [GLScalar scalarWithValue: log(.1/kappaScale) forEquation: self.equation];
+	GLScalar *kappa = [[startPoint[0] times: @(1/kappaScale)] log];;
 	GLScalar *kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: self.equation];
 	
 	GLFloat sScale = 1E-6;
-	GLScalar *s = [GLScalar scalarWithValue: log(1e-6/sScale) forEquation: self.equation];
+	GLScalar *s = [[startPoint[1] times: @(1/sScale)] log];
 	GLScalar *sDelta = [GLScalar scalarWithValue: 0.5 forEquation: self.equation];
 	
-	GLScalar *theta = [GLScalar scalarWithValue: 0.0*M_PI/180. forEquation: self.equation];
+	GLScalar *theta = startPoint[2];
 	GLScalar *thetaDelta = [GLScalar scalarWithValue: 45.*M_PI/180. forEquation: self.equation];
 	
 	GLScalar *alpha = [GLScalar scalarWithValue: 0 forEquation: self.equation];

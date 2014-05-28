@@ -80,7 +80,7 @@ int main(int argc, const char * argv[])
 			NSLog(@"%@---strain-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
             
             
-			result = [models bestFitToVorticityStrainDiffusivityModel];
+			result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
 			
 			minError = result[0];
 			minKappa = result[1];

@@ -25,6 +25,7 @@
 
 // Returns error, kappa, sigma, theta, zeta
 - (NSArray *) bestFitToVorticityStrainDiffusivityModel;
+- (NSArray *) bestFitToVorticityStrainDiffusivityModelWithStartPoint: (NSArray *) startPoint;
 
 @end
 

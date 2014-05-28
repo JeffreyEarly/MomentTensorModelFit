@@ -53,18 +53,19 @@ int main(int argc, const char * argv[])
 		}
 		
 		NSMutableString *outputData = [NSMutableString string];
-		for (NSUInteger iModel=0; iModel<2; iModel++)
+		for (NSUInteger iModel=0; iModel<3; iModel++)
 		{
 			GLFloat kappa = 0.2; // m^2/s
 			
 			NSString *name;
-			NSUInteger totalIterations = 100;
+			NSUInteger totalIterations = 1000;
 			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
 			if (iModel == 0) {
 				name = @"syntheticDiffusive";
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					return @[u,v];
 				};
+				[outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, kappa];
 			} else if (iModel == 1) {
 				name = @"syntheticStrainDiffusive";
 				GLFloat sigma = 3.4e-6;
@@ -76,18 +77,22 @@ int main(int argc, const char * argv[])
 					GLFunction *v2 = [[xpos times: @(sigma_s/2.)] plus: [ypos times: @(-sigma_n/2.)]];
 					return @[[u plus: u2],[v plus: v2]];
 				};
+				[outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', 0.0);\n", name, kappa, sigma, theta];
 			} else {
 				name = @"syntheticVorticityStrainDiffusive";
-				GLFloat sigma = 3.4e-6;
+				GLFloat s = 8e-6;
+				GLFloat alpha = 0.75;
+				GLFloat sigma = s*cosh(alpha);
 				GLFloat theta = -32.249280*M_PI/180.;
 				GLFloat sigma_n = sigma*cos(2.*theta);
 				GLFloat sigma_s = sigma*sin(2.*theta);
-				GLFloat zeta = 1e-6;
+				GLFloat zeta = s*sinh(alpha);
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @((sigma_s-zeta)/2.)]];
 					GLFunction *v2 = [[xpos times: @((sigma_s + zeta)/2.)] plus: [ypos times: @(-sigma_n/2.)]];
 					return @[[u plus: u2],[v plus: v2]];
 				};
+				[outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', %g, 'error', 0.0);\n", name, kappa, sigma, theta, zeta];
 			}
 			
 			GLFloat norm = sqrt(timeStep*2*kappa);
@@ -124,7 +129,7 @@ int main(int argc, const char * argv[])
 				GLScalar *minError = result[0];
 				GLScalar *minKappa = result[1];
 				
-				[outputData appendFormat: @"%@.model1(%lu) = struct('kappa', %f, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', %f);\n", name, i+1, *(minKappa.pointerValue),*(minError.pointerValue)];
+				[outputData appendFormat: @"%@.model1(%lu) = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minError.pointerValue)];
 				NSLog(@"diffusivity model\t\t\t\t\terror: %f (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
 				
 				result = [models bestFitToStrainDiffusivityModel];
@@ -134,11 +139,11 @@ int main(int argc, const char * argv[])
 				GLScalar *minSigma = result[2];
 				GLScalar *minTheta = result[3];
 				
-				[outputData appendFormat: @"%@.model2(%lu) = struct('kappa', %f, 'sigma', %f, 'theta', %f, 'zeta', 0.0, 'error', %f);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minError.pointerValue)];
+				[outputData appendFormat: @"%@.model2(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minError.pointerValue)];
 				NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
 				
 				
-				result = [models bestFitToVorticityStrainDiffusivityModel];
+				result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint: @[minKappa, minSigma, minTheta]];
 				
 				minError = result[0];
 				minKappa = result[1];
@@ -146,12 +151,12 @@ int main(int argc, const char * argv[])
 				minTheta = result[3];
 				GLScalar *minZeta = result[4];
 							
-				[outputData appendFormat: @"%@.model3(%lu) = struct('kappa', %f, 'sigma', %f, 'theta', %f, 'zeta', %f, 'error', %f);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minZeta.pointerValue),*(minError.pointerValue)];
+				[outputData appendFormat: @"%@.model3(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', %g, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minZeta.pointerValue),*(minError.pointerValue)];
 				NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
 
 			}
 		}
-		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitParameters_Synthetic_Models.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitEllipseAreaDivergenceExtremeValues.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 	}
     return 0;
 }
