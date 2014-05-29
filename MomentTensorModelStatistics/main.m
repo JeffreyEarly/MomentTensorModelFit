@@ -61,6 +61,7 @@ int main(int argc, const char * argv[])
 			NSUInteger totalIterations = 1000;
 			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
 			if (iModel == 0) {
+				kappa = 0.569380;
 				name = @"syntheticDiffusive";
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					return @[u,v];
@@ -68,8 +69,9 @@ int main(int argc, const char * argv[])
 				[outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, kappa];
 			} else if (iModel == 1) {
 				name = @"syntheticStrainDiffusive";
-				GLFloat sigma = 3.4e-6;
-				GLFloat theta = -32.249280*M_PI/180.;
+				kappa = 0.205619;
+				GLFloat sigma = 3.49415e-6;
+				GLFloat theta = -32.359313*M_PI/180.;
 				GLFloat sigma_n = sigma*cos(2.*theta);
 				GLFloat sigma_s = sigma*sin(2.*theta);
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
@@ -80,13 +82,17 @@ int main(int argc, const char * argv[])
 				[outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', 0.0);\n", name, kappa, sigma, theta];
 			} else {
 				name = @"syntheticVorticityStrainDiffusive";
-				GLFloat s = 8e-6;
-				GLFloat alpha = 0.75;
-				GLFloat sigma = s*cosh(alpha);
-				GLFloat theta = -32.249280*M_PI/180.;
+//				GLFloat s = 8e-6;
+//				GLFloat alpha = 0.75;
+//				GLFloat sigma = s*cosh(alpha);
+//				GLFloat zeta = s*sinh(alpha);
+				kappa = 0.201481;
+				GLFloat sigma = 3.50241e-06;
+				GLFloat zeta = -3.75091e-08;
+				GLFloat theta = -32.278997*M_PI/180.;
 				GLFloat sigma_n = sigma*cos(2.*theta);
 				GLFloat sigma_s = sigma*sin(2.*theta);
-				GLFloat zeta = s*sinh(alpha);
+				
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @((sigma_s-zeta)/2.)]];
 					GLFunction *v2 = [[xpos times: @((sigma_s + zeta)/2.)] plus: [ypos times: @(-sigma_n/2.)]];
@@ -156,7 +162,7 @@ int main(int argc, const char * argv[])
 
 			}
 		}
-		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitEllipseAreaDivergenceExtremeValues.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitEllipseAreaDivergence.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 	}
     return 0;
 }

@@ -98,9 +98,9 @@
 
 - (NSArray *) bestFitToDiffusivityModel
 {
-	GLFloat kappaScale = 1.0;
-	GLScalar *kappa = [GLScalar scalarWithValue: log(1./kappaScale) forEquation: self.equation];
-	GLScalar *kappaDelta = [GLScalar scalarWithValue: 2.0 forEquation: self.equation];
+	GLFloat kappaScale = 0.1;
+	GLScalar *kappa = [GLScalar scalarWithValue: log(0.1/kappaScale) forEquation: self.equation];
+	GLScalar *kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: self.equation];
 		
 	GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
 		GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
@@ -130,7 +130,7 @@
 	
 	GLFloat sigmaScale = 4.0E-6;
 	GLScalar *sigma = [GLScalar scalarWithValue: log(1E-6/sigmaScale) forEquation: self.equation];
-	GLScalar *sigmaDelta = [GLScalar scalarWithValue: 0.5 forEquation: self.equation];
+	GLScalar *sigmaDelta = [GLScalar scalarWithValue: 1.0 forEquation: self.equation];
 	
 	GLScalar *theta = [GLScalar scalarWithValue: 0.0*M_PI/180. forEquation: self.equation];
 	GLScalar *thetaDelta = [GLScalar scalarWithValue: 45.*M_PI/180. forEquation: self.equation];
@@ -167,18 +167,18 @@
 - (NSArray *) bestFitToVorticityStrainDiffusivityModelWithStartPoint: (NSArray *) startPoint
 {
 	GLFloat kappaScale = 0.1;
-	GLScalar *kappa = [[startPoint[0] times: @(1/kappaScale)] log];;
+	GLScalar *kappa = [[startPoint[0] times: @(1./kappaScale)] log];;
 	GLScalar *kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: self.equation];
 	
 	GLFloat sScale = 1E-6;
-	GLScalar *s = [[startPoint[1] times: @(1/sScale)] log];
-	GLScalar *sDelta = [GLScalar scalarWithValue: 0.5 forEquation: self.equation];
+	GLScalar *s = [[startPoint[1] times: @(1./sScale)] log];
+	GLScalar *sDelta = [GLScalar scalarWithValue: 1.0 forEquation: self.equation];
 	
 	GLScalar *theta = startPoint[2];
 	GLScalar *thetaDelta = [GLScalar scalarWithValue: 45.*M_PI/180. forEquation: self.equation];
 	
 	GLScalar *alpha = [GLScalar scalarWithValue: 0 forEquation: self.equation];
-	GLScalar *alphaDelta = [GLScalar scalarWithValue: 1.0 forEquation: self.equation];
+	GLScalar *alphaDelta = [GLScalar scalarWithValue: 2.0 forEquation: self.equation];
 	
 	// initializing with the results from the previous calculation. we can use log searches if we look for both positive and negative vorticity.
 	GLMinimizationOperation *minimizer_positive = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, s, theta, alpha] withDeltas: @[kappaDelta, sDelta, thetaDelta, alphaDelta] forFunction:^(NSArray *xArray) {
@@ -196,7 +196,7 @@
 	}];
 	NSArray *posResults = minimizer_positive.result;
 	
-	alphaDelta = [GLScalar scalarWithValue: -1.0 forEquation: self.equation];
+	alphaDelta = [GLScalar scalarWithValue: -2.0 forEquation: self.equation];
 	GLMinimizationOperation *minimizer_negative = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, s, theta, alpha] withDeltas: @[kappaDelta, sDelta, thetaDelta, alphaDelta] forFunction:^(NSArray *xArray) {
 		GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
 		GLScalar *sUnscaled = [[xArray[1] exponentiate] times: @(sScale)];
