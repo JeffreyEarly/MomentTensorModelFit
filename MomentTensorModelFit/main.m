@@ -95,7 +95,7 @@ int main(int argc, const char * argv[])
 			i++;
         }
 		
-		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters_area_divergence.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters_area_divergence_total_area.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
     }
     return 0;
 }

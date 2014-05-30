@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
 			GLFloat kappa = 0.2; // m^2/s
 			
 			NSString *name;
-			NSUInteger totalIterations = 1000;
+			NSUInteger totalIterations = 100;
 			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
 			if (iModel == 0) {
 				kappa = 0.569380;
@@ -162,7 +162,7 @@ int main(int argc, const char * argv[])
 
 			}
 		}
-		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitEllipseAreaDivergence.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitEllipseAreaDivergenceTotalSum.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 	}
     return 0;
 }
