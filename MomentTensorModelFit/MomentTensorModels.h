@@ -17,6 +17,8 @@
 
 - (MomentTensorModels *) initWithA: (GLFunction *) a b: (GLFunction *) b theta: (GLFunction *) theta time: (GLFunction *) t;
 
+@property BOOL shouldDifferentiate;
+
 // Returns error, kappa
 - (NSArray *) bestFitToDiffusivityModel;
 

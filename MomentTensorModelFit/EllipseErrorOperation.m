@@ -9,7 +9,7 @@
 #import "EllipseErrorOperation.h"
 #include "ellipse_ellipse_overlap.h"
 
-#define ERROR_METHOD 1
+#define ERROR_METHOD 0
 
 @implementation EllipseErrorOperation
 
