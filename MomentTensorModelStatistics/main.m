@@ -26,8 +26,6 @@ int main(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
-		
-		
 		GLFloat floatSpacing = 500;
 		GLFloat maxTime = 6*86400;
 		GLFloat timeStep = 30*60;
@@ -54,12 +52,12 @@ int main(int argc, const char * argv[])
 		}
 		
 		NSMutableString *outputData = [NSMutableString string];
-		for (NSUInteger iModel=0; iModel<1; iModel++)
+		for (NSUInteger iModel=0; iModel<3; iModel++)
 		{
 			GLFloat kappa = 0.2; // m^2/s
 			
 			NSString *name;
-			NSUInteger totalIterations = 100;
+			NSUInteger totalIterations = 500;
 			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
 			if (iModel == 0) {
 				kappa = 0.569380;
@@ -132,7 +130,6 @@ int main(int argc, const char * argv[])
 				displayKappaSimple( t, newPositions[0],  newPositions[1], kappa);
 				
 				MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
-				models.shouldDifferentiate = YES;
 				NSArray *result = [models bestFitToDiffusivityModel];
 				
 				GLScalar *minError = result[0];
@@ -141,27 +138,27 @@ int main(int argc, const char * argv[])
 				[outputData appendFormat: @"%@.model1(%lu) = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minError.pointerValue)];
 				NSLog(@"diffusivity model\t\t\t\t\terror: %f (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
 				
-//				result = [models bestFitToStrainDiffusivityModel];
-//				
-//				minError = result[0];
-//				minKappa = result[1];
-//				GLScalar *minSigma = result[2];
-//				GLScalar *minTheta = result[3];
-//				
-//				[outputData appendFormat: @"%@.model2(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minError.pointerValue)];
-//				NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
-//				
-//				
-//				result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint: @[minKappa, minSigma, minTheta]];
-//				
-//				minError = result[0];
-//				minKappa = result[1];
-//				minSigma = result[2];
-//				minTheta = result[3];
-//				GLScalar *minZeta = result[4];
-//							
-//				[outputData appendFormat: @"%@.model3(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', %g, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minZeta.pointerValue),*(minError.pointerValue)];
-//				NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+				result = [models bestFitToStrainDiffusivityModel];
+				
+				minError = result[0];
+				minKappa = result[1];
+				GLScalar *minSigma = result[2];
+				GLScalar *minTheta = result[3];
+				
+				[outputData appendFormat: @"%@.model2(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minError.pointerValue)];
+				NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
+				
+				
+				result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint: @[minKappa, minSigma, minTheta]];
+				
+				minError = result[0];
+				minKappa = result[1];
+				minSigma = result[2];
+				minTheta = result[3];
+				GLScalar *minZeta = result[4];
+							
+				[outputData appendFormat: @"%@.model3(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', %g, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minZeta.pointerValue),*(minError.pointerValue)];
+				NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
 
 			}
 		}

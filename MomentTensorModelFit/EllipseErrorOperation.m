@@ -9,7 +9,7 @@
 #import "EllipseErrorOperation.h"
 #include "ellipse_ellipse_overlap.h"
 
-#define ERROR_METHOD 0
+#define ERROR_METHOD 1
 
 @implementation EllipseErrorOperation
 
@@ -57,6 +57,7 @@
         // 1. sum (error[i]/area[i])
 		// For Brownian motion this is sub-optimal and results in over-weighting the first ellipses.
         vGL_vdiv( areaAtTime, 1, errorAtTime, 1, errorAtTime, 1, nPoints);
+		errorAtTime[0] = 0.0;
         vGL_sve( errorAtTime, 1, totalError, nPoints);
         *totalError = (*totalError)/nPoints;
 #else
