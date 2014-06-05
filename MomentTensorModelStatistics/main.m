@@ -26,7 +26,6 @@ int main(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
-		GLFloat floatSpacing = 500;
 		GLFloat maxTime = 6*86400;
 		GLFloat timeStep = 30*60;
 		NSInteger nParticles = 10;
@@ -36,20 +35,29 @@ int main(int argc, const char * argv[])
 		GLFunction *xPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
 		GLFunction *yPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
 		
+		GLFloat initial_x[10] = {9.1850270e+02,1.8899134e+02,-4.5202983e+01,-3.8220605e+02,-7.5438255e+02,2.3973782e+02,-2.6978147e+01,-8.5503970e+01,-5.2958156e+01,0.0};
+		GLFloat initial_y[10] = {8.0306656e+00,-6.4138172e+01,8.3002670e+01,1.6976695e+01,1.6789473e+02,-1.0045537e+03,-5.9171987e+02,4.2653288e+02,9.5797410e+02,0.0};
+		for (NSUInteger i=0; i< xPosition.nDataPoints; i++) {
+			xPosition.pointerValue[i] = initial_x[i];
+			yPosition.pointerValue[i] = initial_y[i];
+		}
+		
+		
 		// Layout the drifters in a cross pattern, just the real drifters
-		NSUInteger iFloat = 0;
-		GLFloat length = ((GLFloat) nParticles/2 - 1)*floatSpacing;
-		for (NSInteger i=0; i<nParticles/2; i++) {
-			xPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
-			yPosition.pointerValue[iFloat] = ((GLFloat) i)*0;
-			iFloat++;
-		}
-		for (NSInteger i=0; i<nParticles/2; i++) {
-			//if (i==0) continue;
-			xPosition.pointerValue[iFloat] = ((GLFloat) i)*0;
-			yPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
-			iFloat++;
-		}
+//		GLFloat floatSpacing = 500;
+//		NSUInteger iFloat = 0;
+//		GLFloat length = ((GLFloat) nParticles/2 - 1)*floatSpacing;
+//		for (NSInteger i=0; i<nParticles/2; i++) {
+//			xPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
+//			yPosition.pointerValue[iFloat] = ((GLFloat) i)*0;
+//			iFloat++;
+//		}
+//		for (NSInteger i=0; i<nParticles/2; i++) {
+//			//if (i==0) continue;
+//			xPosition.pointerValue[iFloat] = ((GLFloat) i)*0;
+//			yPosition.pointerValue[iFloat] = ((GLFloat) i)*floatSpacing - length/2;
+//			iFloat++;
+//		}
 		
 		NSMutableString *outputData = [NSMutableString string];
 		for (NSUInteger iModel=0; iModel<3; iModel++)
@@ -57,10 +65,14 @@ int main(int argc, const char * argv[])
 			GLFloat kappa = 0.2; // m^2/s
 			
 			NSString *name;
-			NSUInteger totalIterations = 500;
+			NSUInteger totalIterations = 100;
 			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
 			if (iModel == 0) {
-				kappa = 0.569380;
+				#if ELLIPSE_ERROR_METHOD == 0
+				kappa = 0.562645;
+				#elif ELLIPSE_ERROR_METHOD == 1
+				kappa = 0.512448;
+				#endif
 				name = @"syntheticDiffusive";
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
 					return @[u,v];
@@ -68,9 +80,15 @@ int main(int argc, const char * argv[])
 				[outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, kappa];
 			} else if (iModel == 1) {
 				name = @"syntheticStrainDiffusive";
-				kappa = 0.205619;
-				GLFloat sigma = 3.49415e-6;
-				GLFloat theta = -32.359313*M_PI/180.;
+				#if ELLIPSE_ERROR_METHOD == 0
+				kappa = 0.201618;
+				GLFloat sigma = 3.43592e-6;
+				GLFloat theta = -31.889246*M_PI/180.;
+				#elif ELLIPSE_ERROR_METHOD == 1
+				kappa = 0.182050;
+				GLFloat sigma = 3.52124e-6;
+				GLFloat theta = -32.732442*M_PI/180.;
+				#endif
 				GLFloat sigma_n = sigma*cos(2.*theta);
 				GLFloat sigma_s = sigma*sin(2.*theta);
 				addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
@@ -85,10 +103,17 @@ int main(int argc, const char * argv[])
 //				GLFloat alpha = 0.75;
 //				GLFloat sigma = s*cosh(alpha);
 //				GLFloat zeta = s*sinh(alpha);
-				kappa = 0.201481;
-				GLFloat sigma = 3.50241e-06;
-				GLFloat zeta = -3.75091e-08;
-				GLFloat theta = -32.278997*M_PI/180.;
+				#if ELLIPSE_ERROR_METHOD == 0
+				kappa = 0.202050;
+				GLFloat sigma = 3.56156e-06;
+				GLFloat zeta = -2.95053e-07;
+				GLFloat theta = -31.095171*M_PI/180.;
+				#elif ELLIPSE_ERROR_METHOD == 1
+				kappa = 0.185815;
+				GLFloat sigma = 3.53881e-06;
+				GLFloat zeta = 1.60949e-07;
+				GLFloat theta = -33.170341*M_PI/180.;
+				#endif
 				GLFloat sigma_n = sigma*cos(2.*theta);
 				GLFloat sigma_s = sigma*sin(2.*theta);
 				
@@ -126,7 +151,9 @@ int main(int argc, const char * argv[])
 			for (NSUInteger i=0; i<totalIterations; i++) {
 				
 				NSArray *newPositions = [integrator integrateAlongDimension: tDim];
-						
+				
+				// Dump the last point... this works around our inability to generate gaussian noise for odd number elements.
+				newPositions = @[ [newPositions[0] variableFromIndexRangeString: @":,0:8"], [newPositions[1] variableFromIndexRangeString: @":,0:8"] ];
 				displayKappaSimple( t, newPositions[0],  newPositions[1], kappa);
 				
 				MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
@@ -162,7 +189,11 @@ int main(int argc, const char * argv[])
 
 			}
 		}
-		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFitEllipseAreaDivergenceTotalSum.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		#if ELLIPSE_ERROR_METHOD == 0
+		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFit_area_divergence_local_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		#elif ELLIPSE_ERROR_METHOD == 1
+		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFit_area_divergence_total_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		#endif
 	}
     return 0;
 }

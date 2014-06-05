@@ -21,19 +21,20 @@ int main(int argc, const char * argv[])
         
         GLEquation *equation = [[GLEquation alloc] init];
         
-		NSString *filePath =  @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho1Drifters.txt";
-		DrifterTracksFileReader *trackReader = [[DrifterTracksFileReader alloc] initWithURL: [NSURL fileURLWithPath: filePath] equation: equation];
-		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
-		
+//		NSString *filePath =  @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho1Drifters.txt";
+//		DrifterTracksFileReader *trackReader = [[DrifterTracksFileReader alloc] initWithURL: [NSURL fileURLWithPath: filePath] equation: equation];
+//		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
 		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/ObservationalData/griddedRhoDrifterMomementEllipses/";
-//        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
-//        folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-strained-diffusive/";
-//		folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-vorticity-strained-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
+#if ELLIPSE_ERROR_METHOD == 0
+		NSString *outputFile = @"BestFitParameters_area_divergence_local_area.m";
+#elif ELLIPSE_ERROR_METHOD == 1
+		NSString *outputFile = @"BestFitParameters_area_divergence_total_area.m";
+#endif
 		NSUInteger i=1;
 		
 		for ( NSString *filename in ellipseFiles)
@@ -95,7 +96,7 @@ int main(int argc, const char * argv[])
 			i++;
         }
 		
-		[outputData writeToFile: [NSString stringWithFormat: @"%@BestFitParameters_area_divergence_total_area.m", folderPath] atomically: YES encoding: NSUTF8StringEncoding error: nil];
+		[outputData writeToFile: [NSString stringWithFormat: @"%@%@", folderPath, outputFile] atomically: YES encoding: NSUTF8StringEncoding error: nil];
     }
     return 0;
 }

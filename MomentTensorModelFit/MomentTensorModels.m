@@ -45,12 +45,19 @@
 		self.Myy0 = self.Myy.pointerValue[0];
 		self.Mxy0 = self.Mxy.pointerValue[0];
 		
-		self.Mxx = [[self.Mxx minus: @(self.Mxx0)] abs];
-		self.Myy = [[self.Myy minus: @(self.Myy0)] abs];
-		self.Mxy = [[self.Mxy minus: @(self.Mxy0)] abs];
-
-//		GLFunction *q_bar = [q minus: @(q.pointerValue[0])];
-//		GLFunction *r_bar = [r minus: @(r.pointerValue[0])];
+//		self.Mxx = [[self.Mxx minus: @(self.Mxx0)] abs];
+//		self.Myy = [[self.Myy minus: @(self.Myy0)] abs];
+//		self.Mxy = [[self.Mxy minus: @(self.Mxy0)] abs];
+//		
+//		GLFunction *q0 = [GLFunction functionOfRealTypeWithDimensions: @[q.dimensions[1]] forEquation:self.equation];
+//		GLFunction *r0 = [GLFunction functionOfRealTypeWithDimensions: @[r.dimensions[1]] forEquation:self.equation];
+//		for (NSUInteger i=0; i<q0.nDataPoints; i++) {
+//			q0.pointerValue[i] = q.pointerValue[i];
+//			r0.pointerValue[i] = r.pointerValue[i];
+//		}
+//
+//		GLFunction *q_bar = [q plus: [q0 negate]];
+//		GLFunction *r_bar = [r plus: [r0 negate]];
 //		self.Mxx = [[q_bar times: q_bar] mean: 1];
 //		self.Myy = [[r_bar times: r_bar] mean: 1];
 //		self.Mxy = [[q_bar times: r_bar] mean: 1];
@@ -75,11 +82,9 @@
 		self.t = t;
 		self.equation = self.Mxx.equation;
 		
-		self.Mxx = [[self.Mxx minus: @(self.Mxx0)] abs];
-		self.Myy = [[self.Myy minus: @(self.Myy0)] abs];
-		self.Mxy = [[self.Mxy minus: @(self.Mxy0)] abs];
-		
-#warning Not subtracting initial conditions everywhere.
+//		self.Mxx = [[self.Mxx minus: @(self.Mxx0)] abs];
+//		self.Myy = [[self.Myy minus: @(self.Myy0)] abs];
+//		self.Mxy = [[self.Mxy minus: @(self.Mxy0)] abs];
 		
 		NSArray *result = ellipseComponentsFromMatrixComponents(self.Mxx, self.Myy, self.Mxy);
 		self.a = result[0];
@@ -118,10 +123,12 @@
 	GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa] withDeltas: @[kappaDelta] forFunction:^(NSArray *xArray) {
 		GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
 		NSArray *tensorComps = diffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled);
-		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
-		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
-		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
-		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+//		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
+//		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
+//		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
+//		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
+
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		
@@ -154,10 +161,12 @@
 		GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
 		GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
 		NSArray *tensorComps = strainDiffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled, sigmaUnscaled, xArray[2]);
-		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
-		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
-		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
-		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+//		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
+//		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
+//		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
+//		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
+
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		
@@ -204,10 +213,12 @@
 		GLScalar *sigmaUnscaled = [sUnscaled times: [xArray[3] cosh]];
 		GLScalar *zetaUnscaled = [sUnscaled times: [xArray[3] sinh]];
 		NSArray *tensorComps = strainVorticityDiffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
-		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
-		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
-		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+//		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
+//		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
+//		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
+//		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
+
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		
@@ -222,10 +233,12 @@
 		GLScalar *sigmaUnscaled = [sUnscaled times: [xArray[3] cosh]];
 		GLScalar *zetaUnscaled = [sUnscaled times: [xArray[3] sinh]];
 		NSArray *tensorComps = strainVorticityDiffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled, sigmaUnscaled, xArray[2], zetaUnscaled);
-		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
-		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
-		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
-		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+//		GLFunction *Mxx = [[(GLFunction *)tensorComps[0] minus: @(self.Mxx0)] abs];
+//		GLFunction *Myy = [[(GLFunction *)tensorComps[1] minus: @(self.Myy0)] abs];
+//		GLFunction *Mxy = [[(GLFunction *)tensorComps[2] minus: @(self.Mxy0)] abs];
+//		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( Mxx, Myy, Mxy );
+		NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
+
 		
 		EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
 		

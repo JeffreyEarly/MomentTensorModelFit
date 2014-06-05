@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <GLNumericalModelingKit/GLNumericalModelingKit.h>
 
+#define ELLIPSE_ERROR_METHOD 0
+
 @interface EllipseErrorOperation : GLVariableOperation
 
 - (EllipseErrorOperation *) initWithParametersFromEllipseA: (NSArray *) paramsA ellipseB: (NSArray *) paramsB;

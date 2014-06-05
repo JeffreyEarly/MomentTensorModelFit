@@ -9,8 +9,6 @@
 #import "EllipseErrorOperation.h"
 #include "ellipse_ellipse_overlap.h"
 
-#define ERROR_METHOD 1
-
 @implementation EllipseErrorOperation
 
 - (EllipseErrorOperation *) initWithParametersFromEllipseA: (NSArray *) paramsA ellipseB: (NSArray *) paramsB
@@ -40,8 +38,6 @@
         
         GLFloat *errorAtTime = (GLFloat *) [bufferArray[0] bytes];
         GLFloat *areaAtTime = (GLFloat *) [bufferArray[1] bytes];
-		
-#if ERROR_METHOD == 0 || ERROR_METHOD == 1
         
         dispatch_apply(tDim.nPoints, dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(size_t iTime) {
 			double X[4], Y[4];
@@ -52,8 +48,9 @@
 			errorAtTime[iTime] = (modelArea - overlapArea) + (obsArea - overlapArea);
 			areaAtTime[iTime] = obsArea;
         });
+		
 		// There are several logical ways to weight the error.
-#if ERROR_METHOD == 0
+#if ELLIPSE_ERROR_METHOD == 0
         // 1. sum (error[i]/area[i])
 		// For Brownian motion this is sub-optimal and results in over-weighting the first ellipses.
         vGL_vdiv( areaAtTime, 1, errorAtTime, 1, errorAtTime, 1, nPoints);
@@ -72,19 +69,6 @@
         *totalError = errorSum/areaSum;
 #endif
 
-#elif ERROR_METHOD == 2
-		size_t iTime = tDim.nPoints -1;
-		double X[4], Y[4];
-		int nroots, rtnCode;
-		double overlapArea = ellipse_ellipse_overlap(angle_obs[iTime], a_obs[iTime], b_obs[iTime], 0.0, 0.0, angle_model[iTime], a_model[iTime], b_model[iTime],0.0, 0.0,X, Y, &nroots, &rtnCode);
-		double obsArea =  M_PI * a_obs[iTime] *  b_obs[iTime];
-		double modelArea = M_PI * a_model[iTime] *  b_model[iTime];
-		errorAtTime[iTime] = (modelArea - overlapArea) + (obsArea - overlapArea);
-		areaAtTime[iTime] = obsArea;
-		
-		*totalError = errorAtTime[iTime]/areaAtTime[iTime];
-		
-#endif
     };
     
     if ((self=[super initWithResult: result operand: operand buffers: buffers operation:errorOperation])) {
