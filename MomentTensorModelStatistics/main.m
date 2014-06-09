@@ -10,6 +10,7 @@
 #import <GLNumericalModelingKit/GLNumericalModelingKit.h>
 #import <GLNumericalModelingKit/GLOperationOptimizer.h>
 #import "MomentTensorModels.h"
+#import "EllipseErrorOperation.h"
 
 void displayKappaSimple( GLFunction *t, GLFunction *xPosition, GLFunction *yPosition, GLFloat kappa)
 {
@@ -65,7 +66,7 @@ int main(int argc, const char * argv[])
 			GLFloat kappa = 0.2; // m^2/s
 			
 			NSString *name;
-			NSUInteger totalIterations = 100;
+			NSUInteger totalIterations = 1000;
 			NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
 			if (iModel == 0) {
 				#if ELLIPSE_ERROR_METHOD == 0
