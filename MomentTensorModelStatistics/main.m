@@ -23,7 +23,7 @@ void displayKappaSimple( GLFunction *t, GLFunction *xPosition, GLFunction *yPosi
 	NSLog(@"kappa: %f, actual kappa: %f", kappa, kappaDeduced);
 }
 
-int main(int argc, const char * argv[])
+int main_rho1(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
@@ -196,6 +196,167 @@ int main(int argc, const char * argv[])
 		[outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic/BestFit_area_divergence_total_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 		#endif
 	}
+    return 0;
+}
+
+int main(int argc, const char * argv[])
+{
+    
+    @autoreleasepool {
+        GLFloat maxTime = 6.33*86400;
+        GLFloat timeStep = 30*60;
+        NSInteger nParticles = 8;
+        GLEquation *equation = [[GLEquation alloc] init];
+        GLDimension *floatDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: nParticles domainMin: 1 length: nParticles];
+        floatDim.name = @"floats";
+        GLFunction *xPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
+        GLFunction *yPosition = [GLFunction functionOfRealTypeWithDimensions: @[floatDim] forEquation: equation];
+        
+        GLFloat initial_x[8] = {-622.3721, -492.9755, -261.3089, 3.4535, 157.1280, 502.5443, 713.5306, 0.0};
+        GLFloat initial_y[8] = {-986.7437, -629.8130, 12.8064, 423.4194, 988.6495, -80.0896, 271.7709, 0.0};
+        for (NSUInteger i=0; i< xPosition.nDataPoints; i++) {
+            xPosition.pointerValue[i] = initial_x[i];
+            yPosition.pointerValue[i] = initial_y[i];
+        }
+        
+        srand(1);
+        
+        NSMutableString *outputData = [NSMutableString string];
+        for (NSUInteger iModel=0; iModel<3; iModel++)
+        {
+            GLFloat kappa = 0.2; // m^2/s
+            
+            NSString *name;
+            NSUInteger totalIterations = 20;
+            NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
+            if (iModel == 0) {
+#if ELLIPSE_ERROR_METHOD == 0
+                kappa = 0.562645;
+#elif ELLIPSE_ERROR_METHOD == 1
+                kappa = 15.395479;
+#endif
+                name = @"syntheticDiffusive";
+                addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
+                    return @[u,v];
+                };
+                [outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, kappa];
+            } else if (iModel == 1) {
+                name = @"syntheticStrainDiffusive";
+#if ELLIPSE_ERROR_METHOD == 0
+                kappa = 0.201618;
+                GLFloat sigma = 3.43592e-6;
+                GLFloat theta = -31.889246*M_PI/180.;
+#elif ELLIPSE_ERROR_METHOD == 1
+                kappa = 2.023440;
+                GLFloat sigma = 8.92312e-06;
+                GLFloat theta = 118.427020*M_PI/180.;
+#endif
+                GLFloat sigma_n = sigma*cos(2.*theta);
+                GLFloat sigma_s = sigma*sin(2.*theta);
+                addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
+                    GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @(sigma_s/2.)]];
+                    GLFunction *v2 = [[xpos times: @(sigma_s/2.)] plus: [ypos times: @(-sigma_n/2.)]];
+                    return @[[u plus: u2],[v plus: v2]];
+                };
+                [outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', 0.0);\n", name, kappa, sigma, theta];
+            } else {
+                name = @"syntheticVorticityStrainDiffusive";
+                //				GLFloat s = 8e-6;
+                //				GLFloat alpha = 0.75;
+                //				GLFloat sigma = s*cosh(alpha);
+                //				GLFloat zeta = s*sinh(alpha);
+#if ELLIPSE_ERROR_METHOD == 0
+                kappa = 0.202050;
+                GLFloat sigma = 3.56156e-06;
+                GLFloat zeta = -2.95053e-07;
+                GLFloat theta = -31.095171*M_PI/180.;
+#elif ELLIPSE_ERROR_METHOD == 1
+                kappa = 1.460998;
+                GLFloat sigma = 1.14503e-05;
+                GLFloat zeta = 1.05988e-05;
+                GLFloat theta = 90.205902*M_PI/180.;
+#endif
+                GLFloat sigma_n = sigma*cos(2.*theta);
+                GLFloat sigma_s = sigma*sin(2.*theta);
+                
+                addUV = ^( GLFunction *xpos, GLFunction *ypos, GLFunction *u,GLFunction *v ) {
+                    GLFunction *u2 = [[xpos times: @(sigma_n/2.)] plus: [ypos times: @((sigma_s-zeta)/2.)]];
+                    GLFunction *v2 = [[xpos times: @((sigma_s + zeta)/2.)] plus: [ypos times: @(-sigma_n/2.)]];
+                    return @[[u plus: u2],[v plus: v2]];
+                };
+                [outputData appendFormat:@"%@.truth = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', %g, 'error', 0.0);\n", name, kappa, sigma, theta, zeta];
+            }
+            
+            GLFloat norm = sqrt(timeStep*2*kappa);
+            norm = sqrt(36./10.)*norm/timeStep; // the integrator multiplies by deltaT, so we account for that here.
+            // RK4: dt/3 f(0) + dt/6 f(1) + dt/6 *f(4) + dt/3*f(3)
+            // sqrt of ( (1/3)^2 + (1/6)^ + (1/6)^2 + (1/3)^2 )
+            
+            NSArray *y=@[xPosition, yPosition];
+            GLRungeKuttaOperation *integrator = [GLRungeKuttaOperation rungeKutta4AdvanceY: y stepSize: timeStep fFromTY:^(GLScalar *time, NSArray *yNew) {
+                GLFunction *xStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
+                GLFunction *yStep = [GLFunction functionWithNormallyDistributedValueWithDimensions: @[floatDim] forEquation: equation];
+                xStep = [xStep times: @(norm)];
+                yStep = [yStep times: @(norm)];
+                
+                return addUV(y[0],y[1],xStep,yStep);
+            }];
+            
+            GLDimension *tDim = [[GLDimension alloc] initDimensionWithGrid: kGLEndpointGrid nPoints: 1+round(maxTime/timeStep) domainMin: 0 length: maxTime];
+            tDim.name = @"t";
+            GLFunction *t = [GLFunction functionOfRealTypeFromDimension: tDim withDimensions: @[tDim] forEquation: equation];
+            
+            
+            [outputData appendFormat:@"%@.model1(%lu) = struct('kappa', 0.0, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, totalIterations];
+            [outputData appendFormat:@"%@.model2(%lu) = struct('kappa', 0.0, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, totalIterations];
+            [outputData appendFormat:@"%@.model3(%lu) = struct('kappa', 0.0, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', 0.0);\n", name, totalIterations];
+            for (NSUInteger i=0; i<totalIterations; i++) {
+                
+                NSArray *newPositions = [integrator integrateAlongDimension: tDim];
+                
+                // Dump the last point... this works around our inability to generate gaussian noise for odd number elements.
+                newPositions = @[ [newPositions[0] variableFromIndexRangeString: @":,0:6"], [newPositions[1] variableFromIndexRangeString: @":,0:6"] ];
+                displayKappaSimple( t, newPositions[0],  newPositions[1], kappa);
+                
+                MomentTensorModels *models = [[MomentTensorModels alloc] initWithXPositions: newPositions[0] yPositions:newPositions[1] time: t];
+                NSArray *result = [models bestFitToDiffusivityModel];
+                
+                GLScalar *minError = result[0];
+                GLScalar *minKappa = result[1];
+                
+                [outputData appendFormat: @"%@.model1(%lu) = struct('kappa', %g, 'sigma', 0.0, 'theta', 0.0, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minError.pointerValue)];
+                NSLog(@"diffusivity model\t\t\t\t\terror: %f (kappa)=(%.4f)", *(minError.pointerValue), *(minKappa.pointerValue));
+                
+                result = [models bestFitToStrainDiffusivityModel];
+                
+                minError = result[0];
+                minKappa = result[1];
+                GLScalar *minSigma = result[2];
+                GLScalar *minTheta = result[3];
+                
+                [outputData appendFormat: @"%@.model2(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', 0.0, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minError.pointerValue)];
+                NSLog(@"strain-diffusivity model\t\t\t\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
+                
+                
+                result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint: @[minKappa, minSigma, minTheta]];
+                
+                minError = result[0];
+                minKappa = result[1];
+                minSigma = result[2];
+                minTheta = result[3];
+                GLScalar *minZeta = result[4];
+                
+                [outputData appendFormat: @"%@.model3(%lu) = struct('kappa', %g, 'sigma', %g, 'theta', %g, 'zeta', %g, 'error', %g);\n", name, i+1, *(minKappa.pointerValue),*(minSigma.pointerValue),*(minTheta.pointerValue),*(minZeta.pointerValue),*(minError.pointerValue)];
+                NSLog(@"strain-vorticity-diffusivity model\terror: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f,%.3g)", *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+                
+            }
+        }
+#if ELLIPSE_ERROR_METHOD == 0
+        [outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic-rho2/BestFit_area_divergence_local_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+#elif ELLIPSE_ERROR_METHOD == 1
+        [outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic-rho2/BestFit_area_divergence_total_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+#endif
+    }
     return 0;
 }
 

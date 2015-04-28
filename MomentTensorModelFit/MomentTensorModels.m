@@ -184,7 +184,7 @@
 - (NSArray *) bestFitToVorticityStrainDiffusivityModel
 {
 	GLScalar *kappa = [GLScalar scalarWithValue: 0.1 forEquation: self.equation];
-	GLScalar *sScale = [GLScalar scalarWithValue: 1e-6 forEquation: self.equation];
+	GLScalar *sScale = [GLScalar scalarWithValue: 1e-5 forEquation: self.equation];
 	GLScalar *theta = [GLScalar scalarWithValue: 0.0 forEquation: self.equation];
 	return [self bestFitToVorticityStrainDiffusivityModelWithStartPoint: @[kappa, sScale, theta]];
 }
@@ -196,7 +196,7 @@
 	GLScalar *kappa = [[startPoint[0] times: @(1./kappaScale)] log];;
 	GLScalar *kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: self.equation];
 	
-	GLFloat sScale = 1E-6;
+	GLFloat sScale = 1E-5;
 	GLScalar *s = [[startPoint[1] times: @(1./sScale)] log];
 	GLScalar *sDelta = [GLScalar scalarWithValue: 1.0 forEquation: self.equation];
 	
