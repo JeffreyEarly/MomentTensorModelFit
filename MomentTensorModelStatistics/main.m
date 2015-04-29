@@ -227,7 +227,7 @@ int main(int argc, const char * argv[])
             GLFloat kappa = 0.2; // m^2/s
             
             NSString *name;
-            NSUInteger totalIterations = 20;
+            NSUInteger totalIterations = 1000;
             NSArray * (^addUV) (GLFunction *,GLFunction *, GLFunction *,GLFunction *);
             if (iModel == 0) {
 #if ELLIPSE_ERROR_METHOD == 0
@@ -354,7 +354,7 @@ int main(int argc, const char * argv[])
 #if ELLIPSE_ERROR_METHOD == 0
         [outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic-rho2/BestFit_area_divergence_local_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 #elif ELLIPSE_ERROR_METHOD == 1
-        [outputData writeToFile: @"/Users/jearly/Documents/LatMix/drifters/synthetic-rho2/BestFit_area_divergence_total_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
+        [outputData writeToFile: @"/Users/jearly/Documents/BestFit_area_divergence_total_area.m" atomically: YES encoding: NSUTF8StringEncoding error: nil];
 #endif
     }
     return 0;
