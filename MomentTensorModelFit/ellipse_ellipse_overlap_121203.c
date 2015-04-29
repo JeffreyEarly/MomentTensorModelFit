@@ -286,7 +286,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		double z[10];
 		gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (5);//5 coeff
 		gsl_set_error_handler_off();
-		ret = gsl_poly_complex_solve (cy, 5, w, z);
+		gsl_poly_complex_solve (cy, 5, w, z);
 		for (i = 0; i < 4; i++)
 		{
 			r[1][i+1] = REAL(z, i); //GSL_REAL(z0);
@@ -474,6 +474,9 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			if (nintpts > 4)
 			{
 				(*rtnCode) = ERROR_INTERSECTION_PTS;
+                free(ychk);
+                free(xint);
+                free(yint);
 				return -1.0;
 			}
 			xint = (double *)realloc(xint, nintpts*sizeof(double));
@@ -481,7 +484,8 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			if(ychk == NULL)
 			{
 				printf("error: could not realloc memory for yint or yint\n");
-				free(xint);
+				free(ychk);
+                free(xint);
 				free(yint);
 				exit(-1);
 			}
@@ -501,6 +505,9 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			if (nintpts > 4)
 			{
 				(*rtnCode) = ERROR_INTERSECTION_PTS;
+                free(ychk);
+                free(xint);
+                free(yint);
 				return -1.0;
 			}
 			xint = (double *)realloc(xint, nintpts*sizeof(double));
@@ -508,7 +515,8 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			if(xint == NULL || yint == NULL)
 			{
 				printf("error: could not realloc memory for yint or yint\n");
-				free(xint);
+				free(ychk);
+                free(xint);
 				free(yint);
 				exit(-1);
 			}
@@ -1042,9 +1050,6 @@ double fourintpts (double xint[], double yint[], double A1, double B1,
 	//-- (xint[3], yint[3] to (xint[4], yint[4]) for the second segment.
 	if (ellipse2tr (xmid, ymid, AA, BB, CC, DD, EE, FF) < 0.0)
 	{
-		area2 = 0.5*(A1B1*(theta[1] - theta[0])
-					 - fabs (xint[0]*yint[1] - xint[1]*yint[0]));
-	    
 		area2 = 0.5*(A1B1*(theta[1] - theta[0])
 					 - fabs (xint[0]*yint[1] - xint[1]*yint[0]));
 
