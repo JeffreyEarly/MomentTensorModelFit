@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
 //		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho2DrifterDay6MomementEllipses/";
 //        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
@@ -41,6 +41,7 @@ int main(int argc, const char * argv[])
 		for ( NSString *filename in ellipseFiles)
 		{
 			if ( ![filename.pathExtension isEqualToString: @"txt"]) continue;
+			if ( [filename containsString: @"_BestFitSummary"]) continue;
 			MomentEllipseFileReader *file = [[MomentEllipseFileReader alloc] initWithURL: [NSURL fileURLWithPath: [NSString stringWithFormat: @"%@%@", folderPath, filename]] equation: equation];
 			if (!file) continue;
 			
