@@ -32,6 +32,16 @@
 		81A830FB17FA2E99003D32C6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 81A830FA17FA2E99003D32C6 /* main.m */; };
 		81A830FF17FA2E99003D32C6 /* MomentTensorModelFit.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */; };
 		81AEF69017FBA35300F87614 /* GLNumericalModelingKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */; };
+		81D29F7E1AFBE23B00947DF4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 81D29F7D1AFBE23B00947DF4 /* main.m */; };
+		81D29F821AFBE25700947DF4 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819545F2183693DA00A357A3 /* Accelerate.framework */; };
+		81D29F831AFBE25C00947DF4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81A830F717FA2E99003D32C6 /* Foundation.framework */; };
+		81D29F841AFBE25F00947DF4 /* GLNumericalModelingKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */; };
+		81D29F851AFBE27E00947DF4 /* libgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8143E91217FC9C7E00020090 /* libgsl.a */; };
+		81D29F861AFBE2A600947DF4 /* MomentTensorModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 818FF1AA192E4F4400F08962 /* MomentTensorModels.m */; };
+		81D29F871AFBE2A800947DF4 /* MomentEllipseFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545ED18367E5F00A357A3 /* MomentEllipseFileReader.m */; };
+		81D29F881AFBE2AB00947DF4 /* DrifterTracksFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */; };
+		81D29F891AFBE2AE00947DF4 /* EllipseErrorOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 819545F0183688FD00A357A3 /* EllipseErrorOperation.m */; };
+		81D29F8A1AFBE2B400947DF4 /* ellipse_ellipse_overlap_121203.c in Sources */ = {isa = PBXBuildFile; fileRef = 8143E91317FC9C7E00020090 /* ellipse_ellipse_overlap_121203.c */; };
 		81E9958B192FB632008F9DB8 /* DrifterTracksFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */; };
 		81E9958C192FB632008F9DB8 /* DrifterTracksFileReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */; };
 /* End PBXBuildFile section */
@@ -67,6 +77,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		81D29F791AFBE23B00947DF4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +117,8 @@
 		81A830FD17FA2E99003D32C6 /* MomentTensorModelFit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MomentTensorModelFit-Prefix.pch"; sourceTree = "<group>"; };
 		81A830FE17FA2E99003D32C6 /* MomentTensorModelFit.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MomentTensorModelFit.1; sourceTree = "<group>"; };
 		81AEF68F17FBA35300F87614 /* GLNumericalModelingKit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = GLNumericalModelingKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		81D29F7B1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomentTensorModelFitTimeWindows; sourceTree = BUILT_PRODUCTS_DIR; };
+		81D29F7D1AFBE23B00947DF4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		81E99589192FB632008F9DB8 /* DrifterTracksFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrifterTracksFileReader.h; sourceTree = "<group>"; };
 		81E9958A192FB632008F9DB8 /* DrifterTracksFileReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrifterTracksFileReader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -132,6 +153,17 @@
 				81A830F817FA2E99003D32C6 /* Foundation.framework in Frameworks */,
 				81AEF69017FBA35300F87614 /* GLNumericalModelingKit.dylib in Frameworks */,
 				8143E91617FC9C7E00020090 /* libgsl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D29F781AFBE23B00947DF4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81D29F841AFBE25F00947DF4 /* GLNumericalModelingKit.dylib in Frameworks */,
+				81D29F831AFBE25C00947DF4 /* Foundation.framework in Frameworks */,
+				81D29F821AFBE25700947DF4 /* Accelerate.framework in Frameworks */,
+				81D29F851AFBE27E00947DF4 /* libgsl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +212,7 @@
 				81A830F917FA2E99003D32C6 /* MomentTensorModelFit */,
 				818FF1B2192E5B3100F08962 /* MomentTensorModelTest */,
 				818FF1C6192E5C5D00F08962 /* MomentTensorModelStatistics */,
+				81D29F7C1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */,
 				81A830F617FA2E99003D32C6 /* Frameworks */,
 				81A830F517FA2E99003D32C6 /* Products */,
 			);
@@ -191,6 +224,7 @@
 				81A830F417FA2E99003D32C6 /* MomentTensorModelFit */,
 				818FF1B0192E5B3100F08962 /* MomentTensorModelTest */,
 				818FF1C4192E5C5D00F08962 /* MomentTensorModelStatistics */,
+				81D29F7B1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -236,6 +270,14 @@
 				81A830FD17FA2E99003D32C6 /* MomentTensorModelFit-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		81D29F7C1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */ = {
+			isa = PBXGroup;
+			children = (
+				81D29F7D1AFBE23B00947DF4 /* main.m */,
+			);
+			path = MomentTensorModelFitTimeWindows;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,6 +334,23 @@
 			productReference = 81A830F417FA2E99003D32C6 /* MomentTensorModelFit */;
 			productType = "com.apple.product-type.tool";
 		};
+		81D29F7A1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81D29F811AFBE23B00947DF4 /* Build configuration list for PBXNativeTarget "MomentTensorModelFitTimeWindows" */;
+			buildPhases = (
+				81D29F771AFBE23B00947DF4 /* Sources */,
+				81D29F781AFBE23B00947DF4 /* Frameworks */,
+				81D29F791AFBE23B00947DF4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MomentTensorModelFitTimeWindows;
+			productName = MomentTensorModelFitTimeWindows;
+			productReference = 81D29F7B1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -300,6 +359,11 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Jeffrey J. Early";
+				TargetAttributes = {
+					81D29F7A1AFBE23B00947DF4 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
+				};
 			};
 			buildConfigurationList = 81A830EF17FA2E99003D32C6 /* Build configuration list for PBXProject "MomentTensorModelFit" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -316,6 +380,7 @@
 				81A830F317FA2E99003D32C6 /* MomentTensorModelFit */,
 				818FF1AF192E5B3100F08962 /* MomentTensorModelTest */,
 				818FF1C3192E5C5D00F08962 /* MomentTensorModelStatistics */,
+				81D29F7A1AFBE23B00947DF4 /* MomentTensorModelFitTimeWindows */,
 			);
 		};
 /* End PBXProject section */
@@ -352,6 +417,19 @@
 				818FF1AB192E4F4400F08962 /* MomentTensorModels.m in Sources */,
 				81A830FB17FA2E99003D32C6 /* main.m in Sources */,
 				819545F1183688FD00A357A3 /* EllipseErrorOperation.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D29F771AFBE23B00947DF4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81D29F7E1AFBE23B00947DF4 /* main.m in Sources */,
+				81D29F861AFBE2A600947DF4 /* MomentTensorModels.m in Sources */,
+				81D29F871AFBE2A800947DF4 /* MomentEllipseFileReader.m in Sources */,
+				81D29F881AFBE2AB00947DF4 /* DrifterTracksFileReader.m in Sources */,
+				81D29F891AFBE2AE00947DF4 /* EllipseErrorOperation.m in Sources */,
+				81D29F8A1AFBE2B400947DF4 /* ellipse_ellipse_overlap_121203.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,6 +632,48 @@
 			};
 			name = Release;
 		};
+		81D29F7F1AFBE23B00947DF4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MomentTensorModelFit",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		81D29F801AFBE23B00947DF4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MomentTensorModelFit",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -592,6 +712,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		81D29F811AFBE23B00947DF4 /* Build configuration list for PBXNativeTarget "MomentTensorModelFitTimeWindows" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81D29F7F1AFBE23B00947DF4 /* Debug */,
+				81D29F801AFBE23B00947DF4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
