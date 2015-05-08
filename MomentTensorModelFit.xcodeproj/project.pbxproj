@@ -645,6 +645,13 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/MomentTensorModelFit/gsl\"",
+					"\"$(SRCROOT)/MomentTensorModelFit\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MomentTensorModelFit",
@@ -664,6 +671,13 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/MomentTensorModelFit/gsl\"",
+					"\"$(SRCROOT)/MomentTensorModelFit\"",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MomentTensorModelFit",
