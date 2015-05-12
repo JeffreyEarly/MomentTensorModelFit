@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
 		//		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Documents/Models/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
 		//        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
@@ -41,7 +41,8 @@ int main(int argc, const char * argv[])
 		NSString *outputFile = @"BestFitParams_area_div_local_area_extending_time_window.m";
 	#elif WINDOWING == 1
 		NSUInteger windowLength = 120;
-		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments, local area divergence\';",windowLength/2,windowLength/4];
+        NSUInteger windowIncrement = 2;
+		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments, local area divergence\';",windowLength/2,windowIncrement/2];
 		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_local_area_rolling_%lu_hour_window.m",windowLength/2];
 	#endif
 #elif ELLIPSE_ERROR_METHOD == 1
@@ -49,8 +50,9 @@ int main(int argc, const char * argv[])
 		[outputData appendFormat: @"titleText=\'Extending window in six hour increments\';"];
 		NSString *outputFile = @"BestFitParams_area_div_total_area_extending_time_window.m";
 	#elif WINDOWING == 1
-		NSUInteger windowLength = 120;
-		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments\';",windowLength/2,windowLength/4];
+		NSUInteger windowLength = 20;
+        NSUInteger windowIncrement = 2;
+		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments\';",windowLength/2,windowIncrement/2];
 		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window.m",windowLength/2];
 	#endif
 #endif
@@ -85,7 +87,7 @@ int main(int argc, const char * argv[])
 			NSUInteger minPoint = 0;
 			for (NSUInteger windowLength=12; minPoint+windowLength < file.t.nDataPoints; windowLength += 12)
 #elif WINDOWING == 1
-			for (NSUInteger minPoint=0; minPoint+windowLength/2 < file.t.nDataPoints; minPoint += windowLength/2)
+			for (NSUInteger minPoint=0; minPoint+windowLength/2 < file.t.nDataPoints; minPoint += windowIncrement)
 #endif
 			{
 				NSRange timeRange = NSMakeRange(minPoint, windowLength);

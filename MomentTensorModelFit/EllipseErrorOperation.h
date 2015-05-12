@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <GLNumericalModelingKit/GLNumericalModelingKit.h>
 
-#define ELLIPSE_ERROR_METHOD 0
+#define ELLIPSE_ERROR_METHOD 1
 
 @interface EllipseErrorOperation : GLVariableOperation
 
