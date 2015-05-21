@@ -323,6 +323,7 @@ NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mx
 	GLScalar * tks = [[[kappa times: @(2)] times: sigma] dividedBy: s2];
 	GLScalar * sig_s = [sigma dividedBy: s];
 	GLScalar * zeta_s = [zeta dividedBy: s];
+	GLScalar * sig_zeta = [sigma dividedBy: zeta];
 	
 	GLScalar * one_plus_sigma_over_s_div2 = [[sig_s plus: @(1)] times: @(0.5)];
 	GLScalar * one_minus_sigma_over_s_div2 = [[sig_s minus: @(1)] times: @(-0.5)];
@@ -344,7 +345,7 @@ NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mx
 	Mbb = [Mbb plus: [[C times: zeta_s] times: @(0.5)]];
 	Mbb = [Mbb minus: [[[[zeta times: zeta] times: t] minus: sigma] times: [[kappa times: @2] dividedBy: s2]]];
 	GLFunction *Mab = [[[[exp_s_t times: zeta_s] times: A] minus: [[exp_minus_s_t times: zeta_s] times: B]] times: @(0.5)];
-	Mab = [Mab plus: [[C times: @(0.5)] times: sig_s]];
+	Mab = [Mab plus: [[C times: @(0.5)] times: sig_zeta]];
 	Mab = [Mab minus: [[[zeta times: sigma] times: t] times: [[kappa times: @2] dividedBy: s2]]];
 	
 	GLFunction *Mxx = [[[Maa times: cos2] plus: [Mbb times: sin2]] plus: [Mab times: [cossin times: @(-2.)]]];
@@ -353,6 +354,100 @@ NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mx
 	
 	return @[Mxx, Myy, Mxy];
 };
+
+// Special case of the above where zeta^2 = sigma^2
+NSArray * strainVorticityMatchedDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *sigma, GLScalar *theta, GLScalar *zeta )
+{
+	GLScalar *cos_t = [theta cos];
+	GLScalar *sin_t = [theta sin];
+	
+	GLScalar *cos2 = [cos_t times: cos_t];
+	GLScalar *sin2 = [sin_t times: sin_t];
+	GLScalar *cossin = [cos_t times: sin_t];
+	
+	GLScalar * Mxx1 = [[[cos2 times: @(Mxx0)] plus: [sin2 times: @(Myy0)]] plus: [cossin times: @(2.*Mxy0)]];
+	GLScalar * Myy1 = [[[sin2 times: @(Mxx0)] plus: [cos2 times: @(Myy0)]] minus: [cossin times: @(2.*Mxy0)]];
+	GLScalar * Mxy1 = [[[cossin times: @(-Mxx0)] plus: [cossin times: @(Myy0)]] plus: [[cos2 minus: sin2] times: @(Mxy0)]];
+	
+	GLScalar * A = [[[zeta times: @(2)] times: Mxy1] minus: [sigma times:[Mxx1 plus: Myy1]]];
+	GLScalar * B = [Mxx1 minus: Myy1];
+	GLScalar * C = [Mxx1 plus: Myy1];
+	
+	GLFunction *ksigmatcubed = [[[[t times: t] times:t] times: [[sigma times: sigma] times: kappa] ] times: @(1./3.)];
+	GLFunction *ksigmatsquared = [[t times: t] times: [sigma times: kappa]];
+	GLFunction *twokappat = [[t times: kappa] times: @(2)];
+	GLFunction *sigmatsquared = [[t times: t] times: sigma];
+	
+	GLFunction *Maa = [[ksigmatcubed plus: ksigmatsquared] plus: twokappat];
+	Maa = [Maa plus: [[A times: [sigmatsquared plus: [t times: @(2)]]] times: @(0.25)]];
+	Maa = [Maa plus: [[B times: [[t times: sigma] plus: @(1)]] times: @(0.5)]];
+	Maa = [Maa plus: [C times: @(0.5)]];
+	
+	GLFunction *Mbb = [[ksigmatcubed minus: ksigmatsquared] plus: twokappat];
+	Mbb = [Mbb plus: [[A times: [sigmatsquared minus: [t times: @(2)]]] times: @(0.25)]];
+	Mbb = [Mbb plus: [[B times: [[t times: sigma] minus: @(1)]] times: @(0.5)]];
+	Mbb = [Mbb plus: [C times: @(0.5)]];
+	
+	GLFunction *Mab = ksigmatcubed;
+	Mab = [Mab plus: [A times: [[[zeta times: [t times: t]] times: @(0.25)] minus: [[zeta times: @(2)] dividedBy: @(1)] ]]];
+	Mab = [Mab plus: [B times: [[t times: zeta] times: @(0.5)]]];
+	Mab = [Mab plus: [C times: [[sigma dividedBy: zeta] times: @(0.5)]]];
+	
+	GLFunction *Mxx = [[[Maa times: cos2] plus: [Mbb times: sin2]] plus: [Mab times: [cossin times: @(-2.)]]];
+	GLFunction *Myy = [[[Maa times: sin2] plus: [Mbb times: cos2]] plus: [Mab times: [cossin times: @(2.)]]];
+	GLFunction *Mxy = [[[Maa times: cossin] minus: [Mbb times: cossin]] plus: [Mab times: [cos2 minus: sin2]]];
+	
+	return @[Mxx, Myy, Mxy];
+}
+
+// The case where vorticity is stronger than strain
+NSArray * strainVorticityDominantedDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *sigma, GLScalar *theta, GLScalar *zeta )
+{
+	GLScalar *cos_t = [theta cos];
+	GLScalar *sin_t = [theta sin];
+	
+	GLScalar *cos2 = [cos_t times: cos_t];
+	GLScalar *sin2 = [sin_t times: sin_t];
+	GLScalar *cossin = [cos_t times: sin_t];
+	
+	GLScalar * s2 = [[zeta times: zeta] minus: [sigma times: sigma]];
+	GLScalar * s = [s2 sqrt];
+	GLScalar * tks = [[[kappa times: @(2)] times: sigma] dividedBy: s2];
+	GLScalar * sig_s = [sigma dividedBy: s];
+	GLScalar * zeta_s = [zeta dividedBy: s];
+	GLScalar * sig_zeta = [sigma dividedBy: zeta];
+	
+	GLFunction * sin_s_t = [[t times: s] sin];
+	GLFunction * cos_s_t = [[t times: s] cos];
+	
+	GLScalar * Mxx1 = [[[cos2 times: @(Mxx0)] plus: [sin2 times: @(Myy0)]] plus: [cossin times: @(2.*Mxy0)]];
+	GLScalar * Myy1 = [[[sin2 times: @(Mxx0)] plus: [cos2 times: @(Myy0)]] minus: [cossin times: @(2.*Mxy0)]];
+	GLScalar * Mxy1 = [[[cossin times: @(-Mxx0)] plus: [cossin times: @(Myy0)]] plus: [[cos2 minus: sin2] times: @(Mxy0)]];
+	
+	GLScalar * Aover2 = [[[Mxx1 minus: Myy1] times: @(0.5)] minus: tks];
+	GLScalar * Bover2 = [[[[[Mxx1 plus: Myy1] times: sigma] times: @(0.5)] minus: [zeta times: Mxy1]] dividedBy: s];
+	GLScalar * Cover2 = [[[[[Mxx1 plus: Myy1] times: [zeta times: zeta]] times: @(0.5)] minus: [[zeta times: sigma] times: Mxy1]] dividedBy: s2];
+	
+	GLFunction *Maa = [[cos_s_t plus: [sig_s times: sin_s_t]] times: Aover2];
+	Maa = [Maa plus: [[sin_s_t minus: [sig_s times: cos_s_t]] times: Bover2]];
+	Maa = [Maa plus: Cover2];
+	Maa = [Maa plus: [[[[zeta times: zeta] times: t] plus: sigma] times: [[kappa times: @2] dividedBy: s2]]];
+	
+	GLFunction *Mbb = [[[cos_s_t minus: [sig_s times: sin_s_t]] times: Aover2] negate];
+	Mbb = [Mbb minus: [[sin_s_t plus: [sig_s times: cos_s_t]] times: Bover2]];
+	Mbb = [Mbb plus: Cover2];
+	Mbb = [Mbb minus: [[[[zeta times: zeta] times: t] minus: sigma] times: [[kappa times: @2] dividedBy: s2]]];
+	
+	GLFunction *Mab = [[[sin_s_t times: zeta_s] times: Aover2] minus: [[cos_s_t times: zeta_s] times: Bover2]];
+	Mab = [Mab plus: [Cover2 times: sig_zeta]];
+	Mab = [Mab minus: [[[zeta times: sigma] times: t] times: [[kappa times: @2] dividedBy: s2]]];
+	
+	GLFunction *Mxx = [[[Maa times: cos2] plus: [Mbb times: sin2]] plus: [Mab times: [cossin times: @(-2.)]]];
+	GLFunction *Myy = [[[Maa times: sin2] plus: [Mbb times: cos2]] plus: [Mab times: [cossin times: @(2.)]]];
+	GLFunction *Mxy = [[[Maa times: cossin] minus: [Mbb times: cossin]] plus: [Mab times: [cos2 minus: sin2]]];
+	
+	return @[Mxx, Myy, Mxy];
+}
 
 NSArray *ellipseComponentsFromMatrixComponents( GLFunction *Mxx, GLFunction *Myy, GLFunction *Mxy)
 {
