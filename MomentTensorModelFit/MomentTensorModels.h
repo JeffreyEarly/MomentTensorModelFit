@@ -30,6 +30,9 @@
 - (NSArray *) bestFitToVorticityStrainDiffusivityModel;
 - (NSArray *) bestFitToVorticityStrainDiffusivityModelWithStartPoint: (NSArray *) startPoint;
 
+- (NSArray *) bestFitToVorticityStrainMatchedDiffusivityModelWithStartPoint: (NSArray *) startPoint;
+- (NSArray *) bestFitToVorticityStrainDominatedDiffusivityModelWithStartPoint: (NSArray *) startPoint;
+
 @end
 
 
