@@ -20,6 +20,9 @@
 // Returns error, kappa
 - (NSArray *) bestFitToDiffusivityModel;
 
+// Returns error, kappa, zeta
+- (NSArray *) bestFitToVorticityDiffusivityModel;
+
 // Returns error, kappa, sigma, theta
 - (NSArray *) bestFitToStrainDiffusivityModel;
 
@@ -45,6 +48,8 @@ NSArray * strainDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFun
 // It takes four parameters, kappa, sigma, theta, and zeta.
 // It returns (Mxx, Myy, Mxy) for all time t.
 NSArray * strainVorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *sigma, GLScalar *theta, GLScalar *zeta );
+
+NSArray * vorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *zeta);
 
 // Simple little utility function that converts tensor components, into ellipse components
 NSArray *tensorCompsToEllipseComps( NSArray *tensorComp );

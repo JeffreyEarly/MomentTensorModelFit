@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
 		//		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/Models/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
 		//        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
@@ -50,10 +50,10 @@ int main(int argc, const char * argv[])
 		[outputData appendFormat: @"titleText=\'Extending window in six hour increments\';"];
 		NSString *outputFile = @"BestFitParams_area_div_total_area_extending_time_window.m";
 	#elif WINDOWING == 1
-		NSUInteger windowLength = 20;
-        NSUInteger windowIncrement = 2;
+		NSUInteger windowLength = 40;
+        NSUInteger windowIncrement = 20;
 		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments\';",windowLength/2,windowIncrement/2];
-		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window.m",windowLength/2];
+		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window_new2.m",windowLength/2];
 	#endif
 #endif
 		NSUInteger ensemble=1;
@@ -125,6 +125,16 @@ int main(int argc, const char * argv[])
 				[outputData appendFormat: @"model2_error(%lu,%lu)=%g; model2_kappa(%lu,%lu)=%g; model2_sigma(%lu,%lu)=%g; model2_theta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minSigma.pointerValue),timeWindow, ensemble, *(minTheta.pointerValue)];
 				NSLog(@"%@---strain-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
 
+                
+                result = [models bestFitToVorticityDiffusivityModel];
+                
+                minError = result[0];
+                minKappa = result[1];
+                GLScalar *minZeta = result[2];
+                
+                [outputData appendFormat: @"model4_error(%lu,%lu)=%g; model4_kappa(%lu,%lu)=%g; model4_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
+                NSLog(@"%@---vorticity-diffusivity model total error: %f (kappa,zeta)=(%.4f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minZeta.pointerValue));
+                
 
 				result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
 
@@ -132,7 +142,7 @@ int main(int argc, const char * argv[])
 				minKappa = result[1];
 				minSigma = result[2];
 				minTheta = result[3];
-				GLScalar *minZeta = result[4];
+				minZeta = result[4];
 
 				[outputData appendFormat: @"model3_error(%lu,%lu)=%g; model3_kappa(%lu,%lu)=%g; model3_sigma(%lu,%lu)=%g; model3_theta(%lu,%lu)=%g; model3_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minSigma.pointerValue),timeWindow, ensemble, *(minTheta.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
 
