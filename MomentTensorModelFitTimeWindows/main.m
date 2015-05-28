@@ -51,7 +51,7 @@ int main(int argc, const char * argv[])
 		NSString *outputFile = @"BestFitParams_area_div_total_area_extending_time_window.m";
 	#elif WINDOWING == 1
 		NSUInteger windowLength = 40;
-        NSUInteger windowIncrement = 20;
+        NSUInteger windowIncrement = windowLength/2;
 		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments\';",windowLength/2,windowIncrement/2];
 		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window_new2.m",windowLength/2];
 	#endif
