@@ -480,7 +480,28 @@ NSArray *diffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *
 	GLFunction *Mxy = [[t times: @(0)] plus: @(Mxy0)];
 	
 	return @[Mxx, Myy, Mxy];
-};
+}
+
+// This model requires initial conditions (Mxx0, Myy0, Mxy0), and a one-dimensional time variable t.
+// It takes three parameters, kappa, sigma, and theta.
+// It returns (Mxx, Myy, Mxy) for all time t.
+NSArray * vorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *zeta)
+{
+	GLFloat A = 0.5*(Mxx0 + Myy0);
+	GLFloat B = -Mxy0;
+	GLFloat C = 0.5*(Mxx0 - Myy0);
+	
+	GLFunction *sin_zeta_t = [[t times: zeta] sin];
+	GLFunction *cos_zeta_t = [[t times: zeta] cos];
+	
+	GLFunction * tks = [t times:[kappa times: @(2)]];
+	
+	GLFunction *Mxx = [[[tks plus: [sin_zeta_t times: @(B)]] plus: [cos_zeta_t times: @(C)]] plus: @(A)];
+	GLFunction *Myy = [[[tks minus: [sin_zeta_t times: @(B)]] minus: [cos_zeta_t times: @(C)]] plus: @(A)];
+	GLFunction *Mxy = [[sin_zeta_t times: @(C)] plus: [cos_zeta_t times:@(-B)]];
+	
+	return @[Mxx, Myy, Mxy];
+}
 
 // This model requires initial conditions (Mxx0, Myy0, Mxy0), and a one-dimensional time variable t.
 // It takes three parameters, kappa, sigma, and theta.
@@ -653,27 +674,6 @@ NSArray * strainVorticityDominantedDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, 
 	
 	return @[Mxx, Myy, Mxy];
 }
-
-// This model requires initial conditions (Mxx0, Myy0, Mxy0), and a one-dimensional time variable t.
-// It takes three parameters, kappa, sigma, and theta.
-// It returns (Mxx, Myy, Mxy) for all time t.
-NSArray * vorticityDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLFloat Mxy0, GLFunction *t, GLScalar *kappa, GLScalar *zeta)
-{
-    GLFloat A = 0.5*(Mxx0 + Myy0);
-    GLFloat B = -Mxy0;
-    GLFloat C = 0.5*(Mxx0 - Myy0);
-    
-    GLFunction *sin_zeta_t = [t sin];
-    GLFunction *cos_zeta_t = [t cos];
-    
-    GLFunction * tks = [t times:[kappa times: @(2)]];
-    
-    GLFunction *Mxx = [[[tks plus: [sin_zeta_t times: @(B)]] plus: [cos_zeta_t times: @(C)]] plus: @(A)];
-    GLFunction *Myy = [[[tks minus: [sin_zeta_t times: @(B)]] minus: [cos_zeta_t times: @(C)]] plus: @(A)];
-    GLFunction *Mxy = [[sin_zeta_t times: @(C)] plus: [cos_zeta_t times:@(-B)]];
-    
-    return @[Mxx, Myy, Mxy];
-};
 
 NSArray *ellipseComponentsFromMatrixComponents( GLFunction *Mxx, GLFunction *Myy, GLFunction *Mxy)
 {
