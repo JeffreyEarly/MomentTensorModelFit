@@ -114,6 +114,7 @@ int main(int argc, const char * argv[])
 				NSLog(@"%@---diffusivity model total error: %f @ (kappa)=(%.4f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue));
 
 
+                
 
 				result = [models bestFitToStrainDiffusivityModel];
 
@@ -126,27 +127,61 @@ int main(int argc, const char * argv[])
 				NSLog(@"%@---strain-diffusivity model total error: %f (kappa,sigma,theta)=(%.4f,%.3g,%.1f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI);
 
                 
-                result = [models bestFitToVorticityDiffusivityModel];
-                
-                minError = result[0];
-                minKappa = result[1];
-                GLScalar *minZeta = result[2];
-                
-                [outputData appendFormat: @"model4_error(%lu,%lu)=%g; model4_kappa(%lu,%lu)=%g; model4_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
-                NSLog(@"%@---vorticity-diffusivity model total error: %f (kappa,zeta)=(%.4f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minZeta.pointerValue));
                 
 
-				result = [models bestFitToVorticityStrainDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
+				result = [models bestFitToVorticityStrainDominatedDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
 
 				minError = result[0];
 				minKappa = result[1];
 				minSigma = result[2];
 				minTheta = result[3];
-				minZeta = result[4];
+				GLScalar *minZeta = result[4];
 
 				[outputData appendFormat: @"model3_error(%lu,%lu)=%g; model3_kappa(%lu,%lu)=%g; model3_sigma(%lu,%lu)=%g; model3_theta(%lu,%lu)=%g; model3_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minSigma.pointerValue),timeWindow, ensemble, *(minTheta.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
 
-				NSLog(@"%@---vorticity-strain-diffusivity model total error: %f (kappa,sigma,theta,zeta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+				NSLog(@"%@---vorticity-strain(dominate)-diffusivity model total error: %f (kappa,sigma,theta,zeta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+                
+                
+                
+                
+                result = [models bestFitToVorticityDiffusivityModel];
+                
+                minError = result[0];
+                minKappa = result[1];
+                minZeta = result[2];
+                
+                [outputData appendFormat: @"model4_error(%lu,%lu)=%g; model4_kappa(%lu,%lu)=%g; model4_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
+                NSLog(@"%@---vorticity-diffusivity model total error: %f (kappa,zeta)=(%.4f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minZeta.pointerValue));
+                
+                
+                
+                result = [models bestFitToVorticityStrainMatchedDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
+                
+                minError = result[0];
+                minKappa = result[1];
+                minSigma = result[2];
+                minTheta = result[3];
+                minZeta = result[4];
+                
+                [outputData appendFormat: @"model5_error(%lu,%lu)=%g; model5_kappa(%lu,%lu)=%g; model5_sigma(%lu,%lu)=%g; model5_theta(%lu,%lu)=%g; model5_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minSigma.pointerValue),timeWindow, ensemble, *(minTheta.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
+                
+                NSLog(@"%@---vorticity-strain-diffusivity-matched model total error: %f (kappa,sigma,theta,zeta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+                
+                
+                
+                result = [models bestFitToVorticityDominatedStrainDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
+                
+                minError = result[0];
+                minKappa = result[1];
+                minSigma = result[2];
+                minTheta = result[3];
+                minZeta = result[4];
+                
+                [outputData appendFormat: @"model6_error(%lu,%lu)=%g; model6_kappa(%lu,%lu)=%g; model6_sigma(%lu,%lu)=%g; model6_theta(%lu,%lu)=%g; model6_zeta(%lu,%lu)=%g;\n",timeWindow, ensemble, *(minError.pointerValue),timeWindow, ensemble, *(minKappa.pointerValue),timeWindow, ensemble, *(minSigma.pointerValue),timeWindow, ensemble, *(minTheta.pointerValue),timeWindow, ensemble, *(minZeta.pointerValue)];
+                
+                NSLog(@"%@---vorticity(dominant)-strain-diffusivity model total error: %f (kappa,sigma,theta,zeta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
+
+                
 				timeWindow++;
 			}
 			ensemble++;
