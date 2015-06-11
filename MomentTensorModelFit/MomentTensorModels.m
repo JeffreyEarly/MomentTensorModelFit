@@ -594,7 +594,7 @@ NSArray * strainVorticityMatchedDiffusivityModel(GLFloat Mxx0, GLFloat Myy0, GLF
 	GLScalar * Myy1 = [[[sin2 times: @(Mxx0)] plus: [cos2 times: @(Myy0)]] minus: [cossin times: @(2.*Mxy0)]];
 	GLScalar * Mxy1 = [[[cossin times: @(-Mxx0)] plus: [cossin times: @(Myy0)]] plus: [[cos2 minus: sin2] times: @(Mxy0)]];
 	
-	GLScalar * A = [[[zeta times: @(2)] times: Mxy1] minus: [sigma times:[Mxx1 plus: Myy1]]];
+	GLScalar * A = [[sigma times:[Mxx1 plus: Myy1]] minus: [[zeta times: @(2)] times: Mxy1]];
 	GLScalar * B = [Mxx1 minus: Myy1];
 	GLScalar * C = [Mxx1 plus: Myy1];
 	
