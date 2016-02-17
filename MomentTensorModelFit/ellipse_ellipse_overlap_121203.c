@@ -282,7 +282,6 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 				printf("py[%d]=%f\n",i, py[i]);
 //BIQUADROOTS (py, r);
 		//#####################################################################################
-		int ret;
 		double z[10];
 		gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (5);//5 coeff
 		gsl_set_error_handler_off();
@@ -882,7 +881,7 @@ double threeintpts (double xint[], double yint[], double A1, double B1,
 					double CC, double DD, double EE, double FF,
 					int *rtnCode)
 {
-	int i, tanpts, tanindex, fnRtn;
+	int i, tanpts, tanindex = 0, fnRtn;
 	double OverlapArea;
 
 	//-- need to determine which point is a tangent, and which two points
@@ -1394,7 +1393,6 @@ QUAD:
 		r[1][k]=r[1][k]-e;
 	}
 END:
-	for(k=1;k<5;k++)
 		return;
 }
 
