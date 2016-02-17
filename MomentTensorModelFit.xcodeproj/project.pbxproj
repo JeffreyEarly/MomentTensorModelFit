@@ -624,6 +624,7 @@
 					"\"$(SRCROOT)/MomentTensorModelFit\"",
 					"\"$(SRCROOT)/MomentTensorModelFit/gsl\"",
 					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -678,6 +679,7 @@
 					"\"$(SRCROOT)/MomentTensorModelFit/gsl\"",
 					"\"$(SRCROOT)/MomentTensorModelFit\"",
 					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

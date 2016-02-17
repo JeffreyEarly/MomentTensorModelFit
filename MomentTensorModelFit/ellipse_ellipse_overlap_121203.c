@@ -1053,7 +1053,9 @@ double fourintpts (double xint[], double yint[], double A1, double B1,
 					 - fabs (xint[0]*yint[1] - xint[1]*yint[0]));
 
 		area4 = 0.5*(A2B2*(theta_tr[2] - theta_tr[1]) - fabs (xint_tr[1]*yint_tr[2] - xint_tr[2]*yint_tr[1]) );
-			
+        
+        area3 = 0;
+        
 		if (theta_tr[3] > theta_tr[0])
 			area5 = 0.5*(A2B2*(theta_tr[0] - (theta_tr[3] - twopi))
 					     - fabs (xint_tr[3]*yint_tr[0] - xint_tr[0]*yint_tr[3]));
