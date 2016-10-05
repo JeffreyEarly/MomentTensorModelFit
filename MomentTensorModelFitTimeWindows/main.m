@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
 		//		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho1DrifterMomementEllipses/";
 		//        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
@@ -52,9 +52,9 @@ int main(int argc, const char * argv[])
 	#elif WINDOWING == 1
         // New time series is in 15 minute increments, not 30.
 		NSUInteger windowLength = 24*4;
-        NSUInteger windowIncrement = windowLength/2;
+        NSUInteger windowIncrement = 4;
 		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments\';",windowLength/4,windowIncrement/4];
-		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window_new2.m",windowLength/4];
+		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window_FineGrid.m",windowLength/4];
 	#endif
 #endif
 		NSUInteger ensemble=1;
