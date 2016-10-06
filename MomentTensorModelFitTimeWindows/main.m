@@ -16,7 +16,7 @@
 
 // 0 is an extending time window
 // 1 is a rollowing time window
-#define WINDOWING 1
+#define WINDOWING 0
 
 int main(int argc, const char * argv[])
 {
@@ -36,22 +36,22 @@ int main(int argc, const char * argv[])
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
 #if ELLIPSE_ERROR_METHOD == 0
-	#if WINDOWING == 0
-			[outputData appendFormat: @"titleText=\'Extending window in six hour increments, local area divergence\';"];
-		NSString *outputFile = @"BestFitParams_area_div_local_area_extending_time_window.m";
-	#elif WINDOWING == 1
-		NSUInteger windowLength = 120;
-        NSUInteger windowIncrement = 2;
+    #if WINDOWING == 0
+        [outputData appendFormat: @"titleText=\'Full experiment fit\';"];
+        NSString *outputFile = @"BestFitParams_area_div_local_area.m";
+    #elif WINDOWING == 1
+        NSUInteger windowLength = 24*4+1;
+        NSUInteger windowIncrement = 4;
 		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments, local area divergence\';",windowLength/2,windowIncrement/2];
 		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_local_area_rolling_%lu_hour_window.m",windowLength/2];
 	#endif
 #elif ELLIPSE_ERROR_METHOD == 1
 	#if WINDOWING == 0
-		[outputData appendFormat: @"titleText=\'Extending window in six hour increments\';"];
-		NSString *outputFile = @"BestFitParams_area_div_total_area_extending_time_window.m";
+		[outputData appendFormat: @"titleText=\'Full experiment fit\';"];
+		NSString *outputFile = @"BestFitParams_area_div_total_area.m";
 	#elif WINDOWING == 1
         // New time series is in 15 minute increments, not 30.
-		NSUInteger windowLength = 24*4;
+		NSUInteger windowLength = 24*4+1;
         NSUInteger windowIncrement = 4;
 		[outputData appendFormat: @"titleText=\'Rolling %lu hour window in %lu hour increments\';",windowLength/4,windowIncrement/4];
 		NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%lu_hour_window_FineGrid.m",windowLength/4];
@@ -84,11 +84,10 @@ int main(int argc, const char * argv[])
 			
 			NSUInteger timeWindow = 1;
 #if WINDOWING == 0
-			
-			NSUInteger minPoint = 0;
-			for (NSUInteger windowLength=12; minPoint+windowLength < file.t.nDataPoints; windowLength += 12)
+            NSUInteger windowLength = file.t.nDataPoints;
+			for (NSUInteger minPoint=0; minPoint+windowLength <= file.t.nDataPoints; minPoint += 1)
 #elif WINDOWING == 1
-			for (NSUInteger minPoint=0; minPoint+windowLength/2 < file.t.nDataPoints; minPoint += windowIncrement)
+			for (NSUInteger minPoint=0; minPoint+windowLength <= file.t.nDataPoints; minPoint += windowIncrement)
 #endif
 			{
 				NSRange timeRange = NSMakeRange(minPoint, windowLength);
