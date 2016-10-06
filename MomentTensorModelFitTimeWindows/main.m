@@ -14,9 +14,9 @@
 #import "EllipseErrorOperation.h"
 #import "DrifterTracksFileReader.h"
 
-// 0 is an extending time window
+// 0 is a single model fit to the whole time series.
 // 1 is a rollowing time window
-#define WINDOWING 0
+#define WINDOWING 1
 
 int main(int argc, const char * argv[])
 {
@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
 		//		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho1DrifterMomementEllipses/";
+		NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
 		//        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
