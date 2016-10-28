@@ -7,22 +7,27 @@
 		<key>MomentTensorModelFit.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>2</integer>
+		</dict>
+		<key>MomentTensorModelFitFixedParameters.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
 		</dict>
 		<key>MomentTensorModelFitTimeWindows.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>6</integer>
+			<integer>5</integer>
 		</dict>
 		<key>MomentTensorModelStatistics.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
+			<integer>4</integer>
 		</dict>
 		<key>MomentTensorModelTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>3</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -38,6 +43,11 @@
 			<true/>
 		</dict>
 		<key>81A830F317FA2E99003D32C6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>81D2974D1DC3B09500758027</key>
 		<dict>
 			<key>primary</key>
 			<true/>
