@@ -192,6 +192,37 @@
 	return @[minError, minKappa, minSigma, minTheta];
 }
 
+- (NSArray *) bestFitToStrainDiffusivityModelWithFixedStrainAngle: (GLScalar *) theta0
+{
+    // kappaDelta is carefully chosen. It needs to represent a sort of 'size of parameter space' that we want to explore.
+    // So here, we make it move around in fairly big chunks, like orders of magnitude.
+    // Yup, big steps are the best, for ALL parameters.
+    GLFloat kappaScale = 0.1;
+    GLScalar *kappa = [GLScalar scalarWithValue: log(.1/kappaScale) forEquation: self.equation];
+    GLScalar *kappaDelta = [GLScalar scalarWithValue: 3.0 forEquation: self.equation];
+    
+    GLFloat sigmaScale = 4.0E-6;
+    GLScalar *sigma = [GLScalar scalarWithValue: log(1E-6/sigmaScale) forEquation: self.equation];
+    GLScalar *sigmaDelta = [GLScalar scalarWithValue: 1.0 forEquation: self.equation];
+    
+    GLMinimizationOperation *minimizer = [[GLMinimizationOperation alloc] initAtPoint: @[kappa, sigma] withDeltas: @[kappaDelta, sigmaDelta] forFunction:^(NSArray *xArray) {
+        GLScalar *kappaUnscaled = [[xArray[0] exponentiate] times: @(kappaScale)];
+        GLScalar *sigmaUnscaled = [[xArray[1] exponentiate] times: @(sigmaScale)];
+        NSArray *tensorComps = strainDiffusivityModel( self.Mxx0, self.Myy0, self.Mxy0, self.t, kappaUnscaled, sigmaUnscaled, theta0);
+        NSArray *ellipseComps = ellipseComponentsFromMatrixComponents( tensorComps[0], tensorComps[1], tensorComps[2] );
+        
+        EllipseErrorOperation *error = [[EllipseErrorOperation alloc] initWithParametersFromEllipseA: ellipseComps ellipseB:@[self.a, self.b, self.theta]];
+        
+        return error.result[0];
+    }];
+    
+    GLScalar *minKappa = [[minimizer.result[0] exponentiate] times: @(kappaScale)];
+    GLScalar *minSigma = [[minimizer.result[1] exponentiate] times: @(sigmaScale)];
+    GLScalar *minTheta = theta0;
+    GLScalar *minError = minimizer.result[2];
+    
+    return @[minError, minKappa, minSigma, minTheta];
+}
 
 - (NSArray *) bestFitToVorticityDiffusivityModel
 {

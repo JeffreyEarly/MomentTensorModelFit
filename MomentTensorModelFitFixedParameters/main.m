@@ -18,6 +18,7 @@
 // 1 is a rolling time window
 #define WINDOWING 1
 #define WINDOW_LENGTH_IN_HOURS 24
+#define SITE 1
 
 int main(int argc, const char * argv[])
 {
@@ -26,13 +27,12 @@ int main(int argc, const char * argv[])
         
         GLEquation *equation = [[GLEquation alloc] init];
         
-        //		NSString *filePath =  @"/Users/jearly/Documents/LatMix/drifters/observations/griddedRho1Drifters.txt";
-        //		DrifterTracksFileReader *trackReader = [[DrifterTracksFileReader alloc] initWithURL: [NSURL fileURLWithPath: filePath] equation: equation];
-        //		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
-        
         NSFileManager *fileManager = [[NSFileManager alloc] init];
+#if SITE == 1
         NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho1DrifterMomementEllipses/";
-        //        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
+#elif SITE == 2
+        NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
+#endif
         NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
         
         NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
         NSUInteger windowLength = WINDOW_LENGTH_IN_HOURS*4+1;
         NSUInteger windowIncrement = 4;
         [outputData appendFormat: @"titleText=\'Rolling %d hour window in %d hour increments, local area divergence\';",WINDOW_LENGTH_IN_HOURS,windowIncrement/4];
-        NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_local_area_rolling_%d_hour_window.m",WINDOW_LENGTH_IN_HOURS];
+        NSString *outputFile = [NSString stringWithFormat:@"BestFitCustomParams_area_div_local_area_rolling_%d_hour_window.m",WINDOW_LENGTH_IN_HOURS];
 #endif
 #elif ELLIPSE_ERROR_METHOD == 1
 #if WINDOWING == 0
@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
         NSUInteger windowLength = WINDOW_LENGTH_IN_HOURS*4+1;
         NSUInteger windowIncrement = 4;
         [outputData appendFormat: @"titleText=\'Rolling %d hour window in %lu hour increments\';",WINDOW_LENGTH_IN_HOURS,windowIncrement/4];
-        NSString *outputFile = [NSString stringWithFormat:@"BestFitParams_area_div_total_area_rolling_%d_hour_window_FineGrid.m",WINDOW_LENGTH_IN_HOURS];
+        NSString *outputFile = [NSString stringWithFormat:@"BestFitCustomParams_area_div_total_area_rolling_%d_hour_window_FineGrid.m",WINDOW_LENGTH_IN_HOURS];
 #endif
 #endif
         NSUInteger ensemble=1;
@@ -115,9 +115,7 @@ int main(int argc, const char * argv[])
                     NSLog(@"%@---diffusivity model total error: %f @ (kappa)=(%.4f)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue));
                     
                     
-                    
-                    
-                    result = [models bestFitToStrainDiffusivityModel];
+                    result = [models bestFitToStrainDiffusivityModelWithFixedStrainAngle:[GLScalar scalarWithValue: -33.0*M_PI/180. forEquation: equation]];
                     
                     minError = result[0];
                     minKappa = result[1];

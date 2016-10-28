@@ -25,6 +25,7 @@
 
 // Returns error, kappa, sigma, theta
 - (NSArray *) bestFitToStrainDiffusivityModel;
+- (NSArray *) bestFitToStrainDiffusivityModelWithFixedStrainAngle: (GLScalar *) theta0;
 
 // Returns error, kappa, sigma, theta, zeta
 - (NSArray *) bestFitToVorticityStrainDiffusivityModel;

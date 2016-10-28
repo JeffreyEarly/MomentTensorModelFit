@@ -54,7 +54,7 @@
 
 #define IMAG(z,i) ((z)[2*(i)+1])
 
-#define DEBUG 0
+#define DEBUG_ELLIPSE_OVERLAP 0
 
 
 //===========================================================================
@@ -216,7 +216,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 	if ( (fabs (PHI_2R) > (twopi)) )
 		PHI_2R = fmod (PHI_2R, twopi);
 		
-	if(DEBUG)
+	if(DEBUG_ELLIPSE_OVERLAP)
 	{
 		printf("H2_TR=%f, K2_TR=%f, PHI_2R=%f\n", H2_TR, K2_TR, PHI_2R);
 	}
@@ -265,7 +265,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 	//-- intersection points of the two ellipse curves.
 	//-- The quartic sometimes degenerates into a polynomial of lesser 
 	//-- degree, so handle all possible cases.
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 		for(i=0; i<5; i++)
 			printf("cy[%d]=%f\n",i, cy[i]);
 
@@ -277,7 +277,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			py[4-i] = cy[i]/cy[4];
 		py[0] = 1.0;
 		
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			for(i=0; i<5; i++)
 				printf("py[%d]=%f\n",i, py[i]);
 //BIQUADROOTS (py, r);
@@ -290,7 +290,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		{
 			r[1][i+1] = REAL(z, i); //GSL_REAL(z0);
 			r[2][i+1] =  IMAG(z, i);   // GSL_IMAG(z0);
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 			{
 				printf("r[1][%d]=%f, r[2][%d]=%f\n", i+1,r[1][i+1], i+1,r[2][i+1] );
 				printf("------->eval=%f\n", gsl_poly_eval (cy, 5, r[1][i+1])  );
@@ -335,7 +335,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		/* nroots = 2; */
 		//#####################################################################################
 		//nroots = gsl_poly_solve_quadratic(py[0], py[1], py[2], &x0, &x1); 
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 		{
 			int tmp = gsl_poly_solve_quadratic(py[0], py[1], py[2], &x0, &x1); 
 			printf ("tmp =%d, x0=%f, x1=%f\n",tmp, x0, x1);
@@ -373,7 +373,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 //== CHECK ROOTS OF THE QUARTIC: ARE THEY POINTS OF INTERSECTION? =======
 //=======================================================================
 //-- determine which roots are real, discard any complex roots
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 		printf ("nroots = %d\n",nroots);
 	
 	nychk = 0;
@@ -382,7 +382,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		if (fabs (r[2][i]) < EPS)
 		{
 			nychk++;
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf ("nychk = %d\n",nychk);
 			ychk = (double *)realloc(ychk, nychk*sizeof(double));
 			
@@ -395,17 +395,17 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 				exit(-1);
 			}
 						
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf ("realloc = %d\n",nychk);
 			ychk[ nychk - 1 ] = r[1][i]*B1;
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("ROOT is Real,  i=%d --> %f (B1=%f)\n",i,r[1][i],B1);
 		}
 	}
 
 //-- sort the real roots by straight insertion
 //size_t numbers_len = sizeof(ychk)/sizeof(double);
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 	{
 		printf("nychk=%d\n",nychk);
 		for(int j = 0; j < nychk; j++)
@@ -430,7 +430,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 /* } */
 //#############################################################
 	qsort(ychk, nychk, sizeof(double), double_cmp);
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 	{
 		printf("\nychk AFTER sorting (%d)\n", nychk);
 		for(int j = 0; j < nychk; j++)
@@ -442,16 +442,16 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 	nintpts = 0;
 	for (i = 0; i < nychk; i++)
 	{
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("------------->i=%d (nychk=%d)\n", i, nychk);
 		//-- check for multiple roots
 		if ( ( i < nychk -1 ) && fabs (ychk[i] - ychk[i+1]) < EPS/2.0 )
 		{
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("i=%d, multiple roots: %f  <--------> %f. continue\n",i,ychk[i], ychk[i-1]);
 			continue;
 		}
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("check intersecting points. nintps is %d", nintpts);
 		//-- check intersection points for ychk[i]
 		if (fabs (ychk[i]) > B1)
@@ -459,7 +459,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		else
 			x1 = A1*sqrt (1.0 - (ychk[i]*ychk[i])/(B1*B1));
 		x2 = -x1;
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 		{
 			printf("\tx1=%f, A=%f. B=%f ---> ellipse2tr(x1)= %f\n",x1, A1, B1, ellipse2tr(x1, ychk[i], AA, BB, CC, DD, EE, FF) );
 			printf("\tx2=%f, A=%f. B=%f ---> ellipse2tr(x2) %f\n",x2, A1, B1, ellipse2tr(x2, ychk[i], AA, BB, CC, DD, EE, FF) );
@@ -468,7 +468,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		if (fabs(ellipse2tr(x1, ychk[i], AA, BB, CC, DD, EE, FF)) < EPS)
 		{
 			nintpts++;
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("first if x1. acc nintps=%d\n",nintpts);
 			if (nintpts > 4)
 			{
@@ -490,7 +490,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			}
 			xint[nintpts-1] = x1;
 			yint[nintpts-1] = ychk[i];
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("nintpts=%d, xint=%f, x2=%f, i=%d, yint=%f\n",nintpts, x1, x2, i, ychk[i]);
 		}
 
@@ -499,7 +499,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 		{
 				
 			nintpts++;
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("first if x2. nintps=%d, Dx=%f (eps2=%f) \n",nintpts, fabs (x2 - x1), EPS);
 			if (nintpts > 4)
 			{
@@ -523,12 +523,12 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 				
 			xint[nintpts-1] = x2;
 			yint[nintpts-1] = ychk[i];
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("nintpts=%d, x1=%f, xint=%f, i=%d, yint=%f\n",nintpts, x1, x2, i, ychk[i]);
 		}
 	}
 
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 	{
 		printf("\nxint AFTER sorting\n");
 		print_double_array(xint, nintpts);
@@ -571,7 +571,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			
 		if (fnRtnCode == TANGENT_POINT)
 		{
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("one point is tangent\n");
 			OverlapArea = nointpts (A1, B1, A2, B2, H1, K1, H2, K2,  
 									PHI_1, PHI_2, H2_TR, K2_TR, AA,BB, CC,  
@@ -583,7 +583,7 @@ double ellipse_ellipse_overlap (double PHI_1, double A1, double B1,
 			OverlapArea = twointpts (xint, yint, A1, B1, PHI_1, A2, B2,
 									 H2_TR, K2_TR, PHI_2, AA, BB, CC, DD,
 									 EE, FF, rtnCode);
-			if (DEBUG)
+			if (DEBUG_ELLIPSE_OVERLAP)
 				printf("check twointpts\n");
 		}
 		free (ychk);
@@ -861,14 +861,14 @@ double twointpts (double x[], double y[], double A1, double B1, double PHI_1,
 	
 	if (area2 < 0)
 	{
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("TWO area2=%f\n",area2);
 		area2 += A2*B2;
 		
 	}
 	
 	(*rtnCode) = TWO_INTERSECTION_POINTS;
-	if(DEBUG)
+	if(DEBUG_ELLIPSE_OVERLAP)
 		printf("Twointpts: \t area1 =%f,  area2=%f\n",area1, area2);
 	return area1 + area2;
 }
@@ -897,7 +897,7 @@ double threeintpts (double xint[], double yint[], double A1, double B1,
 			tanindex = i;
 		}
 	}
-	if(DEBUG)
+	if(DEBUG_ELLIPSE_OVERLAP)
 		printf("tanindex=%d\n",tanindex);
 	
 	//-- there MUST be 2 intersection points and only one tangent
@@ -972,7 +972,7 @@ double fourintpts (double xint[], double yint[], double A1, double B1,
 		
 	//-- sort the angles by straight insertion, and put the points in 
 	//-- counter-clockwise order
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 
 		for (int k=0; k<=3; k++)
 		{
@@ -999,7 +999,7 @@ double fourintpts (double xint[], double yint[], double A1, double B1,
 		xint[k+1] = tmp1;
 		yint[k+1] = tmp2;
 	}
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 	{
 		printf("AFTER sorting\n");
 		for (int k=0; k<=3; k++)
@@ -1076,30 +1076,30 @@ double fourintpts (double xint[], double yint[], double A1, double B1,
 	}
 	if(area5<0)
 	{
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("\n\t\t-------------> area5 is negativ (%f). Add: pi*A2*B2=%f <------------\n",area5, Area_2);
 		area5 += Area_2;
 	}
 	if(area4<0)
 	{
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("\n\t\t-------------> area4 is negativ (%f). Add: pi*A2*B2=%f <------------\n",area4, Area_2);
 		area4 += Area_2;
 	}
 	if(area3<0)
 	{
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("\n\t\t-------------> area3 is negativ (%f). Add: pi*A2*B2=%f <------------\n",area3, Area_1);
 		area3 += Area_1;
 	}
 	if(area2<0)
 	{
-		if (DEBUG)
+		if (DEBUG_ELLIPSE_OVERLAP)
 			printf("\n\t\t-------------> area2 is negativ (%f). Add: pi*A2*B2=%f <------------\n",area2, Area_1);
 		area2 += Area_1;
 	}
 		
-	if (DEBUG)
+	if (DEBUG_ELLIPSE_OVERLAP)
 		printf("\narea1=%f, area2=%f area3=%f, area4=%f, area5=%f\n\n",area1, area2, area3, area4, area5);
 	
 	OverlapArea = area1 + area2 + area3 + area4 + area5;
@@ -1155,9 +1155,9 @@ int istanpt (double x, double y, double A1, double B1, double AA, double BB,
 	//-- if the ellipses are tangent at the intersection point, then
 	//-- points on both sides will either both be inside ellipse 1, or
 	//-- they will both be outside ellipse 1
-	if(DEBUG)
+	if(DEBUG_ELLIPSE_OVERLAP)
 	{
-		printf("\t\t--- debug istanpt with (x,y)=(%f, %f), A1=%f, B1=%f\n", x, y, A1, B1);
+		printf("\t\t--- DEBUG_ELLIPSE_OVERLAP istanpt with (x,y)=(%f, %f), A1=%f, B1=%f\n", x, y, A1, B1);
 		printf("theta=%f\n", theta);
 		printf("eps_Radian=%f\n", eps_radian);
 		printf("(x1, y1)=(%f, %f)\n", x1, y1);
@@ -1183,7 +1183,7 @@ int istanpt (double x, double y, double A1, double B1, double AA, double BB,
 //-- Accessed at http://www.netlib.org/toms/326.
 //-- Modified to void functions, integers replaced with floating point
 //-- where appropriate, some other slight modifications for readability
-//-- and debugging ease.
+//-- and DEBUG_ELLIPSE_OVERLAPging ease.
 //===========================================================================
 void QUADROOTS (double p[], double r[][5])
 {
