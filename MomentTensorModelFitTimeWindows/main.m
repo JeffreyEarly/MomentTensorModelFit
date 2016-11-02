@@ -17,7 +17,8 @@
 // 0 is a single model fit to the whole time series.
 // 1 is a rolling time window
 #define WINDOWING 1
-#define WINDOW_LENGTH_IN_HOURS 24
+#define WINDOW_LENGTH_IN_HOURS 84
+#define SITE 2
 
 int main(int argc, const char * argv[])
 {
@@ -31,8 +32,12 @@ int main(int argc, const char * argv[])
 		//		MomentTensorModels *model = [[MomentTensorModels alloc] initWithXPositions: trackReader.x yPositions:trackReader.y time:trackReader.t];
 		
 		NSFileManager *fileManager = [[NSFileManager alloc] init];
-		NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho1DrifterMomementEllipses/";
-		//        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
+#if SITE == 1
+        NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho1DrifterMomementEllipses/";
+#elif SITE == 2
+        NSString *folderPath = @"/Users/jearly/Documents/ProjectRepositories/LatMix/drifters/observations/griddedRho2DrifterMomementEllipses/";
+#endif
+        //        NSString *folderPath = @"/Users/jearly/Documents/LatMix/drifters/synthetic/moment-ellipses/synthetic-diffusive/";
 		NSArray *ellipseFiles = [fileManager contentsOfDirectoryAtPath: folderPath error: nil];
 		
 		NSMutableString *outputData = [NSMutableString stringWithFormat: @""];
@@ -88,7 +93,7 @@ int main(int argc, const char * argv[])
             NSUInteger windowLength = file.t.nDataPoints;
 			for (NSUInteger minPoint=0; minPoint+windowLength <= file.t.nDataPoints; minPoint += 1)
 #elif WINDOWING == 1
-			for (NSUInteger minPoint=0; minPoint+windowLength <= file.t.nDataPoints; minPoint += windowIncrement)
+			for (NSUInteger minPoint=file.t.nDataPoints - windowLength; minPoint+windowLength <= file.t.nDataPoints; minPoint += windowIncrement)
 #endif
 			{
 				NSRange timeRange = NSMakeRange(minPoint, windowLength);
@@ -155,7 +160,6 @@ int main(int argc, const char * argv[])
                 NSLog(@"%@---vorticity-diffusivity model total error: %f (kappa,zeta)=(%.4f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minZeta.pointerValue));
                 
                 
-                
                 result = [models bestFitToVorticityStrainMatchedDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
                 
                 minError = result[0];
@@ -168,8 +172,9 @@ int main(int argc, const char * argv[])
                 
                 NSLog(@"%@---vorticity-strain-diffusivity-matched model total error: %f (kappa,sigma,theta,zeta)=(%.4f,%.3g,%.1f,%.3g)", filename.lastPathComponent, *(minError.pointerValue), *(minKappa.pointerValue),*(minSigma.pointerValue),(*(minTheta.pointerValue))*180./M_PI, *(minZeta.pointerValue));
                 
-                
-                
+                minKappa = [GLScalar scalarWithValue: 0.5 forEquation: equation];
+                minSigma = [GLScalar scalarWithValue: 2.0e-5 forEquation: equation];
+                minTheta = [GLScalar scalarWithValue: -100.*M_PI/180. forEquation: equation];
                 result = [models bestFitToVorticityDominatedStrainDiffusivityModelWithStartPoint:@[minKappa, minSigma, minTheta]];
                 
                 minError = result[0];
